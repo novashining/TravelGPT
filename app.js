@@ -11,14 +11,14 @@ let selected = /^[1-8]$/.test(requestedDay || '') ? Number(requestedDay) - 1 : 0
 let returnFocus = null;
 const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
 const base={
-arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'HELLO, MIAMI',theme:'Arrival',title:'A fresh start, Miami style.',plan:[['On the way','Travel to Miami.'],['Settle in','Pick up the rental car and check in.'],['After dark','New Year’s Eve at CityPlace Doral, or a cozy early night.']],links:[['CityPlace Doral map',maps('CityPlace Doral Miami')]],description:'Touch down, settle in, and swap winter for a little South Florida warmth. New Year’s Eve can be a stroll around CityPlace Doral or an easy night together.'},
+arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'HELLO, MIAMI',theme:'Arrival',title:'A fresh start, Miami style.',plan:[['On the way','Travel to Miami.'],['Settle in','Pick up the rental car and check in at Comfort Suites Miami - Kendall.'],['After dark','Dinner near the hotel or an optional New Year’s Eve outing to CityPlace Doral.']],links:[['CityPlace Doral map',maps('CityPlace Doral Miami')]],description:'Touch down, settle in, and swap winter for a little South Florida warmth. New Year’s Eve can be a stroll around CityPlace Doral or an easy night together.'},
 everglades:{id:'everglades',image:'shark-valley-tower',alt:'The Shark Valley Observation Tower and its winding ramp above the wetlands',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
 snorkel:{id:'adventure',image:'snorkel',alt:'A snorkeler exploring tropical fish and coral in Biscayne National Park',place:'BISCAYNE NATIONAL PARK',theme:'Ocean adventure',title:'Go where the fish are.',plan:[['Morning','A relaxed wander around Coconut Grove.'],['Afternoon','Biscayne snorkeling, planned for 1:30–5 pm.'],['Evening','Dinner by the marina.']],note:'Weather dependent. We’ll choose Zoo Miami if the ocean is too rough or cold. A reef visit is not guaranteed.',links:[['Snorkeling tour','https://www.biscaynenationalparkinstitute.org/coconut-grove-snorkel/'],['Marina map',maps('Dinner Key Marina Miami')]],description:'Blue water, tropical fish, and a peek into Biscayne’s underwater world. This is our fair-weather adventure; Zoo Miami is the backup if marine conditions don’t cooperate.'},
 zoo:{id:'adventure',image:'zoo',alt:'Pink flamingos reflected in a pond at Zoo Miami',place:'ZOO MIAMI',theme:'Wildlife day',title:'A day with the tall crowd.',plan:[['Morning','Head to Zoo Miami for giraffes, elephants, and more.'],['Afternoon','Take our time exploring the animal exhibits.'],['Evening','Dinner and an easy night.']],note:'Our full-day alternative if snorkeling weather is unfavorable.',links:[['Zoo Miami','https://www.zoomiami.org/'],['Map',maps('Zoo Miami')]],description:'A whole day for giraffes, elephants, and animal encounters. Our land-based adventure if the ocean has other plans.'},
-transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car and move to South Beach.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
-mid:{id:'mid',image:'deco',alt:'Palm trees and colorful Art Deco hotels along Ocean Drive',place:'MID BEACH + SOUTH BEACH',theme:'Beach mode',title:'Let the beach set the pace.',plan:[['Morning','Take the free Collins Express trolley to Mid Beach and stroll the boardwalk.'],['Afternoon','South Beach time, around noon–4:30 pm.'],['Evening','Ocean Drive and its colorful Art Deco buildings.']],links:[['Free trolley','https://www.miamibeachfl.gov/city-hall/transportation/trolley/'],['Beach map',maps('South Beach Miami Beach')]],description:'A trolley ride, a boardwalk stroll, and an afternoon reserved for the beach. We’ll save the warmest days for ocean time.'},
-city:{id:'city',image:'frost',alt:'The circular aquarium window at Frost Science with sharks and rays overhead',place:'WYNWOOD + FROST SCIENCE',theme:'City discoveries',title:'Color outside the lines.',plan:[['Morning','Open-top Big Bus and the murals of Wynwood Walls.'],['Afternoon','Frost Science: aquarium, planetarium, then Bayside Marketplace.'],['Evening','Optional: Luminosa at Jungle Island, if running on our dates.']],note:'Choose a cooler, dry day for the bus and pack a light jacket. If it rains, take an Uber to Frost Science instead.',links:[['Big Bus','https://www.bigbustours.com/en/miami/red-route-miami'],['Frost Science','https://www.frostscience.org/plan-your-day/'],['Jungle Island','https://www.jungleisland.com/']],description:'A day of larger-than-life murals, city views, and sharks overhead at Frost Science. We can move this day around to leave the best weather for the beach.'},
-garden:{id:'garden',image:'espanola',alt:'Palm trees and Spanish-style architecture along Española Way',place:'GARDENS + SOUTH BEACH',theme:'Beach mode',title:'A little green. A lot of blue.',plan:[['Morning','Botanical Garden, Holocaust Memorial, and Lincoln Road by trolley.'],['Afternoon','Back to South Beach, around noon–4:30 pm.'],['Evening','A stroll along Española Way and dinner.']],links:[['Botanical Garden','https://www.mbgarden.org/visit'],['Map',maps('Miami Beach Botanical Garden')]],description:'A peaceful garden morning, a walk along Lincoln Road, and another afternoon with the ocean. Española Way is our evening change of scenery.'},
+transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car and check in at The Fifth Hotel in South Beach.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
+mid:{id:'mid',image:'deco',alt:'Palm trees and colorful Art Deco hotels along Ocean Drive',place:'MID BEACH + SOUTH BEACH',theme:'Beach mode',title:'Let the beach set the pace.',plan:[['Morning','Take the South Beach trolley to Lincoln Road, then Collins Express to Mid Beach for a Beachwalk stroll.'],['Afternoon','South Beach time, around noon–4:30 pm.'],['Evening','Ocean Drive and its colorful Art Deco buildings.']],links:[['Free trolley','https://www.miamibeachfl.gov/city-hall/transportation/trolley/'],['Beach map',maps('South Beach Miami Beach')]],description:'A trolley ride, a boardwalk stroll, and an afternoon reserved for the beach. We’ll save the warmest days for ocean time.'},
+city:{id:'city',image:'frost',alt:'The circular aquarium window at Frost Science with sharks and rays overhead',place:'WYNWOOD + FROST SCIENCE',theme:'City discoveries',title:'Color outside the lines.',plan:[['Morning','Walk to Big Bus stop 2 at 555 Washington Ave and ride to Wynwood Walls.'],['Afternoon','Reboard at Wynwood and get off Downtown. Walk to Frost Science and Bayside Marketplace.'],['Evening','Rideshare back to The Fifth Hotel. Optional: Luminosa at Jungle Island, if running on our dates.']],note:'Choose a cooler, dry day for the bus and pack a light jacket. If it rains, take an Uber to Frost Science instead.',links:[['Big Bus','https://www.bigbustours.com/en/miami/red-route-miami'],['Frost Science','https://www.frostscience.org/plan-your-day/'],['Jungle Island','https://www.jungleisland.com/']],description:'A day of larger-than-life murals, city views, and sharks overhead at Frost Science. We can move this day around to leave the best weather for the beach.'},
+garden:{id:'garden',image:'espanola',alt:'Palm trees and Spanish-style architecture along Española Way',place:'GARDENS + SOUTH BEACH',theme:'Beach mode',title:'A little green. A lot of blue.',plan:[['Morning','Take South Beach Loop B to Convention Center Drive, then walk to the Botanical Garden, Holocaust Memorial, and Lincoln Road.'],['Afternoon','Back to South Beach, around noon–4:30 pm.'],['Evening','A stroll along Española Way and dinner.']],links:[['Botanical Garden','https://www.mbgarden.org/visit'],['Map',maps('Miami Beach Botanical Garden')]],description:'A peaceful garden morning, a walk along Lincoln Road, and another afternoon with the ocean. Española Way is our evening change of scenery.'},
 departure:{id:'departure',image:'pier',alt:'South Pointe Pier and the turquoise Miami Beach shoreline from above',place:'ONE LAST LOOK',theme:'Homeward bound',title:'One more dose of sea air.',plan:[['Morning','A last beach walk or short trolley ride, if time allows.'],['Check out','Leave time for the hotel checkout and airport transfer.'],['Homeward','Bring the memories. Leave the sand.']],note:'Timing depends on our flight.',links:[],description:'One last look at the ocean before heading home. The morning stays flexible around our flight.'}
 };
 function days(){const c=Number(state.citydate),g=c===6?5:6;return [base.arrival,base.everglades,state.adventure==='zoo'?base.zoo:base.snorkel,base.transfer,...[4,5,6].map(i=>i===c?getCity():i===g?base.garden:base.mid),base.departure]}
@@ -228,8 +228,15 @@ async function share(day){const u=new URL(location.href);u.hash='';u.searchParam
 $('share').onclick = () => share();
 $('share-bottom').onclick = () => share();
 
+const trolleyLinks = {
+  south: 'https://www.miamibeachfl.gov/city-hall/transportation/trolley/south-beach-trolley/',
+  collins: 'https://www.miamibeachfl.gov/city-hall/transportation/trolley/collins-express-2/',
+  bigBus: 'https://www.bigbustours.com/en/miami/red-route-miami'
+};
 const stops = {
-  airport: ['Miami International Airport', 25.7959, -80.2870],
+  airport: ['Miami International Airport', 25.7959, -80.2870, 'Miami International Airport, Miami, FL'],
+  kendall: ['Comfort Suites Miami - Kendall', 25.732909, -80.382517, '3901 SW 117th Ave, Miami, FL 33175'],
+  fifth: ['The Fifth Hotel', 25.772576, -80.133110, '321 Collins Ave, Miami Beach, FL 33139'],
   doral: ['CityPlace Doral', 25.8120, -80.3510],
   shark: ['Shark Valley Visitor Center', 25.7576, -80.7664],
   airboat: ['Coopertown Airboats', 25.7618, -80.5778],
@@ -238,25 +245,121 @@ const stops = {
   vizcaya: ['Vizcaya Museum & Gardens', 25.7443, -80.2105],
   havana: ['Domino Park, Little Havana', 25.7653, -80.2190],
   pointe: ['South Pointe Park', 25.7660, -80.1340],
-  mid: ['Miami Beach Boardwalk, Mid Beach', 25.8119, -80.1218],
+  mid: ['Beachwalk at 31st Street', 25.8071, -80.1222],
   ocean: ['Ocean Drive, Art Deco District', 25.7810, -80.1305],
   beach: ['Lummus Park, South Beach', 25.7800, -80.1297],
-  wynwood: ['Wynwood Walls', 25.8010, -80.1994],
+  wynwood: ['Wynwood Walls · Big Bus stop 7', 25.8004, -80.1990, '2450 NW 2nd Ave, Miami, FL'],
   frost: ['Frost Science', 25.7853, -80.1880],
   bayside: ['Bayside Marketplace', 25.7785, -80.1867],
   garden: ['Miami Beach Botanical Garden', 25.7953, -80.1360],
+  memorial: ['Holocaust Memorial Miami Beach', 25.7966, -80.1375],
   lincoln: ['Lincoln Road Mall', 25.7907, -80.1390],
-  espanola: ['Española Way', 25.7864, -80.1326]
+  espanola: ['Española Way', 25.7864, -80.1326],
+  trolley4: ['Washington Ave & 4th St', 25.773489, -80.134315, 'Washington Ave and 4th St, Miami Beach, FL'],
+  trolleyLincoln: ['Washington Ave & Lincoln Rd', 25.790596, -80.131096, 'Washington Ave and Lincoln Rd, Miami Beach, FL'],
+  trolley31: ['Collins Ave & 31st St', 25.806877, -80.124058, 'Collins Ave and 31st St, Miami Beach, FL'],
+  trolley29: ['Indian Creek Dr & 29th St', 25.805423, -80.126365, 'Indian Creek Dr and 29th St, Miami Beach, FL'],
+  trolley17: ['Washington Ave & 17th St', 25.7920, -80.1306, 'Washington Ave and 17th St, Miami Beach, FL'],
+  trolley12: ['Washington Ave & 12th St', 25.7826, -80.1330, 'Washington Ave and 12th St, Miami Beach, FL'],
+  trolleyConvention: ['17th St & Convention Center Dr', 25.792302, -80.134476, '17th St and Convention Center Dr, Miami Beach, FL'],
+  busSouth: ['South Beach · Big Bus stop 2', 25.774795, -80.133894, '555 Washington Ave, Miami Beach, FL'],
+  busDowntown: ['Downtown · Big Bus stop 8', 25.7777, -80.1875, '302 Biscayne Blvd, Miami, FL']
+};
+
+const coords = key => stops[key].slice(1, 3);
+// These are simplified segments of the published routes, for the legs used on this trip.
+const southBeachReturn = [
+  [25.7790, -80.1883], [25.7850, -80.1890], [25.78539, -80.18558],
+  [25.78459, -80.17814], [25.78143, -80.16587], [25.77904, -80.15835],
+  [25.77566, -80.14492], [25.77484, -80.13924], [25.77482, -80.13349], coords('fifth')
+];
+const transitRoutes = {
+  mid: {
+    title: 'Trolley to Mid Beach',
+    steps: [
+      ['Out', 'Walk to Washington & 4th. Take South Beach Loop B to Lincoln Rd, then Collins Express to 31st St.'],
+      ['Back', 'Board southbound at Indian Creek & 29th. Change at Washington & 17th for Loop A, then get off at 12th St for Lummus Park. Walk back to the hotel along Ocean Drive.']
+    ],
+    sources: [['South Beach trolley map', trolleyLinks.south], ['Collins Express map', trolleyLinks.collins]],
+    legs: [
+      ['walk', [coords('fifth'), [25.77353, -80.13332], coords('trolley4')]],
+      ['local', [coords('trolley4'), [25.7802,-80.1340], [25.7861,-80.1320], [25.79068,-80.1315], coords('trolleyLincoln')]],
+      ['express', [coords('trolleyLincoln'), [25.7911,-80.1292], [25.7954,-80.12792], [25.8004,-80.12625], coords('trolley31')]],
+      ['express', [coords('trolley29'), [25.8036,-80.1265], [25.8000,-80.12677], [25.7956,-80.1281], [25.79202,-80.1291], coords('trolley17')]],
+      ['local', [coords('trolley17'), [25.78615,-80.13208], coords('trolley12')]],
+      ['walk', [coords('trolley12'), [25.78293,-80.13013], coords('beach'), coords('ocean'),
+        [25.7748,-80.1319], [25.77267,-80.1320], coords('fifth')]]
+    ]
+  },
+  garden: {
+    title: 'Trolley to the gardens',
+    steps: [
+      ['Out', 'Walk to Washington & 4th. Ride South Beach Loop B to 17th St & Convention Center Dr, then walk to the garden.'],
+      ['Back', 'Walk through Lincoln Road and Española Way to the beach, then back to The Fifth Hotel.']
+    ],
+    sources: [['South Beach trolley map', trolleyLinks.south]],
+    legs: [
+      ['walk', [coords('fifth'), [25.77353,-80.13332], coords('trolley4')]],
+      ['local', [coords('trolley4'), [25.7802,-80.1340], [25.7861,-80.1320], [25.79295,-80.13019],
+        [25.79685,-80.1290], [25.7990,-80.12855], [25.7995,-80.12645], [25.7972,-80.1273],
+        [25.79445,-80.1299], [25.7922,-80.1307], coords('trolleyConvention')]],
+      ['walk', [coords('trolleyConvention'), [25.7923,-80.1359], coords('garden'), coords('memorial'),
+        [25.7946,-80.1376], [25.79065,-80.1376], coords('lincoln'), [25.7907,-80.132],
+        coords('espanola'), [25.78655,-80.13005], coords('beach'), [25.7748,-80.1319],
+        [25.77267,-80.1320], coords('fifth')]]
+    ]
+  },
+  city: {
+    title: 'Big Bus Red Loop',
+    steps: [
+      ['Out', 'Walk to stop 2 at 555 Washington Ave. Ride to Wynwood, stop 7. Reboard there and get off at Downtown, stop 8.'],
+      ['Back', 'Walk from Downtown to Frost Science and Bayside. Take a rideshare back to The Fifth Hotel when you’re ready.']
+    ],
+    sources: [['Official Red Loop map & stops', trolleyLinks.bigBus]],
+    legs: [
+      ['walk', [coords('fifth'), [25.77424,-80.13312], coords('busSouth')]],
+      ['bus', [coords('busSouth'), [25.7801,-80.13394], [25.7861,-80.1320], [25.7916,-80.13068],
+        [25.7921,-80.1290], [25.7997,-80.1267], coords('trolley31'), [25.8137,-80.1221],
+        [25.8134,-80.1245], [25.8128,-80.1355], [25.8121,-80.154], [25.8118,-80.177],
+        [25.8119,-80.1917], [25.8114,-80.1917], [25.8114,-80.1925], [25.8042,-80.1949],
+        [25.8042,-80.1990], coords('wynwood'), [25.7992,-80.1990], [25.7992,-80.1952],
+        [25.7877,-80.1918], [25.7802,-80.1881], coords('busDowntown')]],
+      ['walk', [coords('busDowntown'), [25.7845,-80.1892], coords('frost')]],
+      ['walk', [coords('frost'), [25.7839,-80.1882], coords('bayside')]],
+      ['ride', [coords('bayside'), ...southBeachReturn]]
+    ]
+  },
+  rainyCity: {
+    title: 'Rainy city day',
+    steps: [['Out & back', 'Take a rideshare from The Fifth Hotel to Frost Science and back.']],
+    sources: [],
+    legs: [['ride', [coords('frost'), ...southBeachReturn.slice(2)]]]
+  }
 };
 const dailyStops = {
-  arrival: ['airport','doral'], everglades: ['shark','airboat'],
-  transfer: ['vizcaya','havana','airport','pointe'], mid: ['mid','beach','ocean'],
-  garden: ['garden','lincoln','beach','espanola'], departure: ['pointe','airport']
+  arrival: [['airport','Start'], ['kendall','Check in'], ['doral','Optional evening stop'], ['kendall','End']],
+  everglades: [['kendall','Start'], ['shark'], ['airboat'], ['kendall','End']],
+  transfer: [['kendall','Start'], ['vizcaya'], ['havana'], ['airport','Return the rental car'], ['fifth','Check in'], ['pointe'], ['fifth','End']],
+  mid: [['fifth','Start'], ['trolley4','Board Loop B'], ['trolleyLincoln','Board Collins Express'], ['trolley31','Get off'], ['mid'],
+    ['trolley29','Board southbound'], ['trolley17','Change to Loop A'], ['trolley12','Get off'], ['beach'], ['ocean'], ['fifth','End']],
+  garden: [['fifth','Start'], ['trolley4','Board Loop B'], ['trolleyConvention','Get off'], ['garden'], ['memorial'], ['lincoln'], ['beach'], ['espanola'], ['fifth','End']],
+  departure: [['fifth','Start'], ['pointe','Optional beach walk'], ['fifth','Collect bags'], ['airport','End']]
 };
 function stopsFor(day) {
-  if (day.id === 'adventure') return state.adventure === 'zoo' ? ['zoo'] : ['marina'];
-  if (day.id === 'city') return state.rain === 'wet' ? ['frost'] : ['wynwood','frost','bayside'];
+  if (day.id === 'adventure') {
+    return [['kendall','Start'], [state.adventure === 'zoo' ? 'zoo' : 'marina'], ['kendall','End']];
+  }
+  if (day.id === 'city') {
+    return state.rain === 'wet'
+      ? [['fifth','Start'], ['frost'], ['fifth','End']]
+      : [['fifth','Start'], ['busSouth','Board Big Bus'], ['wynwood','Get off / reboard'],
+        ['busDowntown','Get off'], ['frost'], ['bayside'], ['fifth','End']];
+  }
   return dailyStops[day.id];
+}
+function routeFor(day) {
+  if (day.id === 'city' && state.rain === 'wet') return transitRoutes.rainyCity;
+  return transitRoutes[day.id];
 }
 
 let tripMap, mapLayer;
@@ -272,64 +375,150 @@ function setupMap() {
   tiles.on('tileerror', () => $('trip-map').classList.add('tiles-unavailable'));
   mapLayer = L.layerGroup().addTo(tripMap);
 }
+const legStyles = {
+  local: { label: 'South Beach trolley', color: '#06786b' },
+  express: { label: 'Collins Express', color: '#166bb0' },
+  bus: { label: 'Big Bus Red Loop', color: '#bb422e' },
+  walk: { label: 'Walk', color: '#404b55', dashArray: '3 6' },
+  ride: { label: 'Rideshare', color: '#754485', dashArray: '8 6' }
+};
+
+function renderRoute(route) {
+  const guide = $('map-route');
+  guide.hidden = !route || mediaMode !== 'map' || showAllStops;
+  if (guide.hidden) return;
+  const labels = [...new Set(route.legs.map(([mode]) => mode))];
+  guide.innerHTML = `
+    <h4>${route.title}</h4>
+    <dl>${route.steps.map(([label, description]) => `<div><dt>${label}</dt><dd>${description}</dd></div>`).join('')}</dl>
+    ${labels.length ? `<div class="route-key" aria-label="Map line colors">${labels.map(mode =>
+      `<span><i class="${mode}" style="--leg-color:${legStyles[mode].color}"></i>${legStyles[mode].label}</span>`
+    ).join('')}</div>` : ''}
+    ${route.legs.length ? `<div class="route-sources"><span>Approximate route</span>${route.sources.map(([label, url]) =>
+      `<a href="${url}" target="_blank" rel="noopener">${label}</a>`).join('')}</div>` : ''}`;
+}
+
+function groupStops(entries) {
+  const groups = new Map();
+  for (const [key, role] of entries) {
+    if (!groups.has(key)) groups.set(key, []);
+    if (role) groups.get(key).push(role);
+  }
+  return groups;
+}
+
+function directionsLink(key) {
+  const [name,,,address] = stops[key];
+  const link = document.createElement('a');
+  link.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(address || name + ', Florida');
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.textContent = 'Directions';
+  link.setAttribute('aria-label', 'Directions to ' + name);
+  return link;
+}
+
 function renderStops() {
   const list = $('stop-list');
   const day = days()[selected];
-  const activeKeys = stopsFor(day);
-  const keys = showAllStops ? [...new Set(days().flatMap(stopsFor))] : activeKeys;
+  const entries = showAllStops
+    ? [...new Set(days().flatMap(stopsFor).map(([key]) => key))].map(key => [key])
+    : stopsFor(day);
+  const route = routeFor(day);
+  renderRoute(route);
   $('map-day').textContent = showAllStops ? 'Whole trip' : dateShort(selected) + ' · ' + shortTitle(day);
   $('all-stops').textContent = showAllStops ? 'Back to this day' : 'Show all stops';
   $('all-stops').setAttribute('aria-pressed', String(showAllStops));
   setupMap();
   const canDraw = tripMap && mediaMode === 'map';
+  const order = groupStops(entries);
+  const markers = new Map();
+  const numbers = new Map();
+  let number = 0;
   if (canDraw) {
     tripMap.invalidateSize({pan: false});
     mapLayer.clearLayers();
   }
+  const color = selected < 4 && !showAllStops ? 'coral-pin' : 'teal-pin';
+  for (const [key, roles] of order) {
+    const [name, lat, lng, address] = stops[key];
+    const hotel = key === 'kendall' || key === 'fifth';
+    const label = hotel ? 'H' : String(++number);
+    numbers.set(key, label);
+    if (!canDraw) continue;
+    const marker = L.marker([lat,lng], {
+      title: name, alt: name, zIndexOffset: hotel ? 500 : 0,
+      icon: L.divIcon({className: 'trip-pin ' + (hotel ? 'hotel-pin' : color), html: label, iconSize: [28,28]})
+    });
+    const endpoint = roles.filter(role => role === 'Start' || role === 'End').join(' / ');
+    marker.on('add', () => marker.getElement()?.setAttribute('aria-label', [name, endpoint].filter(Boolean).join(', ')));
+    marker.addTo(mapLayer);
+    markers.set(key, marker);
+    const popup = document.createElement('div');
+    const heading = document.createElement('strong');
+    heading.textContent = name;
+    popup.append(heading);
+    if (address) popup.append(document.createElement('br'), address);
+    if (roles.length) popup.append(document.createElement('br'), [...new Set(roles)].join(' · '));
+    popup.append(document.createElement('br'), directionsLink(key));
+    marker.bindPopup(popup, {autoPanPaddingTopLeft: [14, 72], autoPanPaddingBottomRight: [14, 62]});
+    if (hotel && endpoint && !showAllStops) {
+      marker.bindTooltip(endpoint, {permanent: true, direction: 'top', offset: [0,-15], className: 'hotel-tooltip'});
+    }
+  }
   list.replaceChildren();
-  const points = [];
-  keys.forEach((key, i) => {
-    const [name, lat, lng] = stops[key];
-    const label = i + 1;
+  for (const [key, role] of entries) {
     const item = document.createElement('li');
-    const direction = document.createElement('a');
-    direction.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(name + ', Florida');
-    direction.target = '_blank';
-    direction.rel = 'noopener';
-    direction.textContent = 'Directions';
-    direction.setAttribute('aria-label', 'Directions to ' + name);
-    if (canDraw) {
-      const color = selected < 4 && !showAllStops ? 'coral-pin' : 'teal-pin';
-      const icon = L.divIcon({className: 'trip-pin ' + color, html: String(label), iconSize: [28,28]});
-      const marker = L.marker([lat,lng], {title: name, alt: name, icon});
-      marker.on('add', () => marker.getElement()?.setAttribute('aria-label', label + '. ' + name));
-      marker.addTo(mapLayer);
-      const popup = document.createElement('div');
-      popup.textContent = name;
-      popup.append(document.createElement('br'), direction.cloneNode(true));
-      marker.bindPopup(popup, {autoPanPaddingTopLeft: [14, 72], autoPanPaddingBottomRight: [14, 62]});
+    const badge = document.createElement('span');
+    badge.className = 'stop-badge' + (numbers.get(key) === 'H' ? ' stop-hotel' : '');
+    badge.textContent = numbers.get(key);
+    badge.setAttribute('aria-hidden', 'true');
+    const name = stops[key][0];
+    item.append(badge);
+    if (role) {
+      const label = document.createElement('strong');
+      label.className = 'stop-role';
+      label.textContent = role;
+      item.append(label, ' ');
+    }
+    if (markers.has(key)) {
       const locate = document.createElement('button');
       locate.type = 'button';
       locate.className = 'locate-stop';
       locate.textContent = name;
-      locate.onclick = () => marker.openPopup();
+      locate.onclick = () => {
+        markers.get(key).openPopup();
+        $('trip-map').scrollIntoView({block: 'center'});
+      };
       item.append(locate);
-      points.push([lat,lng]);
     } else {
-      item.append(document.createTextNode(name));
+      item.append(name);
     }
-    item.append(direction);
+    item.append(directionsLink(key));
     list.append(item);
-  });
+  }
   if (!canDraw) return;
-  const view = keys.join(',');
+  const points = [...order.keys()].map(coords);
+  if (route && !showAllStops) {
+    for (const [mode, path] of route.legs) {
+      const {color: lineColor, dashArray} = legStyles[mode];
+      L.polyline(path, {color: lineColor, dashArray, weight: 5, opacity: .92, interactive:false}).addTo(mapLayer);
+      points.push(...path);
+    }
+  }
+  const view = [...order.keys()].join(',');
   if (view !== lastMapView) {
-    if (points.length === 1) tripMap.setView(points[0], 14, {animate: false});
-    else tripMap.fitBounds(points, {padding: [32,32], maxZoom: 14, animate: false});
+    tripMap.fitBounds(points, {paddingTopLeft: [38,60], paddingBottomRight: [38,55], maxZoom: 14, animate: false});
     lastMapView = view;
   }
 }
 $('all-stops').onclick = () => { showAllStops = !showAllStops; renderStops(); };
+$('open-stop-list').onclick = () => {
+  const details = $('map-details');
+  details.open = true;
+  details.scrollIntoView({block: 'start'});
+  details.querySelector('summary').focus({preventScroll: true});
+};
 
 const bookingItems = [
   ['Shark Valley bikes or tram', base.everglades.links[0][1]],

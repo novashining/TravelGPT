@@ -19,7 +19,7 @@
 <div class="hero-bottom shell"><p>DEC 31, 2026 <span>–</span> JAN 7, 2027</p><p>8 days. 7 nights. <span class="hero-bottom-extra">One happy escape.</span></p></div>
 <div class="sun-stamp" aria-hidden="true">HELLO<br><span>sunshine</span><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="9"/><path d="M24 2v7m0 30v7M2 24h7m30 0h7M8.5 8.5l5 5m21 21 5 5m0-31-5 5m-21 21-5 5"/></svg></div>
 </section>
-<div class="trip-ribbon"><div class="shell"><span id="countdown">New Year in Miami</span><p><b>Greater Miami</b> · Dec 31 – Jan 3 · With a car</p><span class="ribbon-sun" aria-hidden="true">✳</span><p><b>South Beach</b> · Jan 3 – 7 · Car-free</p></div></div>
+<div class="trip-ribbon"><div class="shell"><span id="countdown">New Year in Miami</span><p><b>Kendall</b> · Dec 31 – Jan 3 · With a car</p><span class="ribbon-sun" aria-hidden="true">✳</span><p><b>South Beach</b> · Jan 3 – 7 · Car-free</p></div></div>
 <section class="moments shell section" id="moments"><div class="section-head"><div><p class="eyebrow">THE GOOD STUFF</p><h2>Worth leaving<br>winter for.</h2></div><p>Tap a photo to explore the stop.</p></div>
 <div class="moments-grid">
 <button class="moment wild" data-experience="everglades" aria-label="Explore Everglades"><img src="assets/everglades.webp" alt="Sunset over the sawgrass and water of Everglades National Park" loading="lazy" decoding="async"><span class="image-shade"></span><span class="moment-copy"><small>JAN 1 · NATIONAL PARK</small><strong>Everglades</strong><span class="explore-label">Bikes, gators & the river of grass<span class="plus" aria-hidden="true">+</span></span></span></button>
@@ -47,12 +47,16 @@
     </div>
     <div class="day-map-view" id="day-map-view" hidden>
       <div id="trip-map" role="region" aria-label="Map of Miami trip stops"></div>
-      <button type="button" class="small-button" id="all-stops" aria-pressed="false">Show all stops</button>
+      <div class="map-actions">
+        <button type="button" class="small-button" id="all-stops" aria-pressed="false">Show all stops</button>
+        <button type="button" class="small-button" id="open-stop-list" aria-controls="map-details">Stops &amp; directions</button>
+      </div>
     </div>
   </div>
   <div class="day-content" id="day-content"></div>
 </article>
 </div>
+<aside class="map-route" id="map-route" aria-label="Transit plan" hidden></aside>
 <details class="map-details" id="map-details">
   <summary><strong>Stops &amp; directions</strong><span id="map-day"></span></summary>
   <div class="map-side"><ol id="stop-list"></ol></div>
