@@ -1,7 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
-const defaults={adventure:'snorkel',citydate:'5',rain:'dry'};
-const valid={adventure:['snorkel','zoo'],citydate:['4','5','6'],rain:['dry','wet']};
+const defaults={adventure:'snorkel',citydate:'5',rain:'dry',rental:'confirm'};
+const valid={adventure:['snorkel','zoo'],citydate:['4','5','6'],rain:['dry','wet'],rental:['confirm','fll','mia']};
 let state={...defaults};
 try{state={...defaults,...JSON.parse(localStorage.getItem('travelgpt-family-v2')||'{}')}}catch{}
 const params=new URLSearchParams(location.search);
@@ -10,18 +10,42 @@ const requestedDay = params.get('day');
 let selected = /^[1-8]$/.test(requestedDay || '') ? Number(requestedDay) - 1 : 0;
 let returnFocus = null;
 const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const flights = {
+  outbound: {
+    day: 0, date: 'Thu, Dec 31', direction: 'To Florida', number: '2959',
+    from: ['IAD', 'Washington Dulles', '3:58 PM'],
+    to: ['FLL', 'Fort Lauderdale', '6:49 PM'],
+    start: '20261231T205800Z', end: '20261231T234900Z',
+    note: 'Collect the rental car at FLL, then head to Comfort Suites Miami - Kendall.'
+  },
+  inbound: {
+    day: 7, date: 'Thu, Jan 7', direction: 'Home to Virginia', number: '2960',
+    from: ['FLL', 'Fort Lauderdale', '7:04 PM'],
+    to: ['IAD', 'Washington Dulles', '9:42 PM'],
+    start: '20270108T000400Z', end: '20270108T024200Z',
+    note: 'Collect your bags at The Fifth Hotel, then take a rideshare to FLL.'
+  }
+};
+const airportGuide = 'https://www.broward.org/Airport/passengers/Transportation';
+
 const base={
-arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'HELLO, MIAMI',theme:'Arrival',title:'A fresh start, Miami style.',plan:[['On the way','Travel to Miami.'],['Settle in','Pick up the rental car and check in at Comfort Suites Miami - Kendall.'],['After dark','Dinner near the hotel or an optional New Year’s Eve outing to CityPlace Doral.']],links:[['CityPlace Doral map',maps('CityPlace Doral Miami')]],description:'Touch down, settle in, and swap winter for a little South Florida warmth. New Year’s Eve can be a stroll around CityPlace Doral or an easy night together.'},
+arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'SOUTH FLORIDA ARRIVAL',theme:'Flight day',title:'Touch down in Fort Lauderdale.',plan:[['3:58 PM','Depart Washington Dulles (IAD) on flight #2959.'],['6:49 PM','Land at Fort Lauderdale (FLL). Collect bags and pick up the rental car.'],['Evening','Drive to Comfort Suites Miami - Kendall, check in, and have dinner nearby.']],links:[['FLL rental car center',airportGuide]],description:'An evening arrival at Fort Lauderdale, then an easy dinner and hotel check-in before the Everglades.'},
 everglades:{id:'everglades',image:'shark-valley-tower',alt:'The Shark Valley Observation Tower and its winding ramp above the wetlands',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
 snorkel:{id:'adventure',image:'snorkel',alt:'A snorkeler exploring tropical fish and coral in Biscayne National Park',place:'BISCAYNE NATIONAL PARK',theme:'Ocean adventure',title:'Go where the fish are.',plan:[['Morning','A relaxed wander around Coconut Grove.'],['Afternoon','Biscayne snorkeling, planned for 1:30–5 pm.'],['Evening','Dinner by the marina.']],note:'Weather dependent. We’ll choose Zoo Miami if the ocean is too rough or cold. A reef visit is not guaranteed.',links:[['Snorkeling tour','https://www.biscaynenationalparkinstitute.org/coconut-grove-snorkel/'],['Marina map',maps('Dinner Key Marina Miami')]],description:'Blue water, tropical fish, and a peek into Biscayne’s underwater world. This is our fair-weather adventure; Zoo Miami is the backup if marine conditions don’t cooperate.'},
 zoo:{id:'adventure',image:'zoo',alt:'Pink flamingos reflected in a pond at Zoo Miami',place:'ZOO MIAMI',theme:'Wildlife day',title:'A day with the tall crowd.',plan:[['Morning','Head to Zoo Miami for giraffes, elephants, and more.'],['Afternoon','Take our time exploring the animal exhibits.'],['Evening','Dinner and an easy night.']],note:'Our full-day alternative if snorkeling weather is unfavorable.',links:[['Zoo Miami','https://www.zoomiami.org/'],['Map',maps('Zoo Miami')]],description:'A whole day for giraffes, elephants, and animal encounters. Our land-based adventure if the ocean has other plans.'},
-transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car and check in at The Fifth Hotel in South Beach.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
+transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car at the location on your rental agreement, then check in at The Fifth Hotel.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
 mid:{id:'mid',image:'deco',alt:'Palm trees and colorful Art Deco hotels along Ocean Drive',place:'MID BEACH + SOUTH BEACH',theme:'Beach mode',title:'Let the beach set the pace.',plan:[['Morning','Take the South Beach trolley to Lincoln Road, then Collins Express to Mid Beach for a Beachwalk stroll.'],['Afternoon','South Beach time, around noon–4:30 pm.'],['Evening','Ocean Drive and its colorful Art Deco buildings.']],links:[['Free trolley','https://www.miamibeachfl.gov/city-hall/transportation/trolley/'],['Beach map',maps('South Beach Miami Beach')]],description:'A trolley ride, a boardwalk stroll, and an afternoon reserved for the beach. We’ll save the warmest days for ocean time.'},
 city:{id:'city',image:'frost',alt:'The circular aquarium window at Frost Science with sharks and rays overhead',place:'WYNWOOD + FROST SCIENCE',theme:'City discoveries',title:'Color outside the lines.',plan:[['Morning','Walk to Big Bus stop 2 at 555 Washington Ave and ride to Wynwood Walls.'],['Afternoon','Reboard at Wynwood and get off Downtown. Walk to Frost Science and Bayside Marketplace.'],['Evening','Rideshare back to The Fifth Hotel. Optional: Luminosa at Jungle Island, if running on our dates.']],note:'Choose a cooler, dry day for the bus and pack a light jacket. If it rains, take an Uber to Frost Science instead.',links:[['Big Bus','https://www.bigbustours.com/en/miami/red-route-miami'],['Frost Science','https://www.frostscience.org/plan-your-day/'],['Jungle Island','https://www.jungleisland.com/']],description:'A day of larger-than-life murals, city views, and sharks overhead at Frost Science. We can move this day around to leave the best weather for the beach.'},
 garden:{id:'garden',image:'espanola',alt:'Palm trees and Spanish-style architecture along Española Way',place:'GARDENS + SOUTH BEACH',theme:'Beach mode',title:'A little green. A lot of blue.',plan:[['Morning','Take South Beach Loop B to Convention Center Drive, then walk to the Botanical Garden, Holocaust Memorial, and Lincoln Road.'],['Afternoon','Back to South Beach, around noon–4:30 pm.'],['Evening','A stroll along Española Way and dinner.']],links:[['Botanical Garden','https://www.mbgarden.org/visit'],['Map',maps('Miami Beach Botanical Garden')]],description:'A peaceful garden morning, a walk along Lincoln Road, and another afternoon with the ocean. Española Way is our evening change of scenery.'},
-departure:{id:'departure',image:'pier',alt:'South Pointe Pier and the turquoise Miami Beach shoreline from above',place:'ONE LAST LOOK',theme:'Homeward bound',title:'One more dose of sea air.',plan:[['Morning','A last beach walk or short trolley ride, if time allows.'],['Check out','Leave time for the hotel checkout and airport transfer.'],['Homeward','Bring the memories. Leave the sand.']],note:'Timing depends on our flight.',links:[],description:'One last look at the ocean before heading home. The morning stays flexible around our flight.'}
+departure:{id:'departure',image:'pier',alt:'South Pointe Pier and the turquoise Miami Beach shoreline from above',place:'SOUTH POINTE PIER',theme:'Flight day',title:'One more morning by the ocean.',plan:[['Morning','Take a last walk at South Pointe. Check out of The Fifth Hotel and collect your bags before leaving.'],['Afternoon','Take a rideshare from South Beach to Fort Lauderdale airport. Allow extra time for traffic and the airport.'],['7:04 PM','Flight #2960 leaves FLL and arrives at Washington Dulles (IAD) at 9:42 PM.']],links:[['FLL airport guide',airportGuide]],description:'An open morning in South Beach, then an evening flight from Fort Lauderdale back to Dulles.'}
 };
-function days(){const c=Number(state.citydate),g=c===6?5:6;return [base.arrival,base.everglades,state.adventure==='zoo'?base.zoo:base.snorkel,base.transfer,...[4,5,6].map(i=>i===c?getCity():i===g?base.garden:base.mid),base.departure]}
+function days(){const c=Number(state.citydate),g=c===6?5:6;return [base.arrival,base.everglades,state.adventure==='zoo'?base.zoo:base.snorkel,transferDay(),...[4,5,6].map(i=>i===c?getCity():i===g?base.garden:base.mid),base.departure]}
+function transferDay() {
+  if (state.rental === 'confirm') return {...base.transfer, note: 'Rental return location still to verify. You can add it under Trip details.'};
+  const airport = state.rental === 'fll' ? 'Fort Lauderdale airport (FLL)' : 'Miami airport (MIA)';
+  return {...base.transfer, plan: base.transfer.plan.map(([time, plan]) => [time, time === 'Afternoon'
+    ? `Cuban lunch in Little Havana. Return the car at ${airport}, then check in at The Fifth Hotel.` : plan])};
+}
 function getCity(){if(state.rain==='dry')return base.city;return {...base.city,title:'A little rain. A lot of wonder.',place:'FROST SCIENCE',plan:[['Morning','Take an Uber to downtown Miami.'],['Afternoon','Frost Science’s aquarium, planetarium, and indoor exhibits.'],['Evening','Dinner. Luminosa only if rain clears and the event is running.']],note:'Skip the open-top bus and outdoor stops in the rain.'}}
 const weekdays=['THU','FRI','SAT','SUN','MON','TUE','WED','THU'];
 const dateShort=i=>i===0?'Dec 31':'Jan '+i;
@@ -100,6 +124,8 @@ document.querySelectorAll('.media-toggle button').forEach(button => {
 function render() {
   const tripDays = days();
   const day = tripDays[selected];
+  renderOverview(tripDays);
+  const pins = pinsFor(day);
   $('day-tabs').innerHTML = tripDays.map((entry, i) =>
     `<button role="tab" id="tab-${i}" class="day-tab" aria-selected="${i === selected}" aria-controls="day-panel" tabindex="${i === selected ? 0 : -1}" data-index="${i}">
       <span>${weekdays[i]}</span><b>${dateShort(i)}</b><span>${shortTitle(entry)}</span>
@@ -111,7 +137,8 @@ function render() {
     <div class="day-meta"><p class="eyebrow">${dateLong(selected)}</p><span class="day-theme">${day.theme}</span></div>
     <h3>${day.title}</h3>
     ${dayChoices(day)}
-    <dl>${day.plan.map(([time, plan]) => `<div><dt>${time}</dt><dd>${plan}</dd></div>`).join('')}</dl>
+    <dl class="day-timeline">${day.plan.map(([time, plan], index) => `<div><dt>${time}</dt><dd>${plan}${pins[index]
+      ? `<button type="button" class="timeline-pin" data-spot="${pins[index][0]}" aria-label="Show ${pins[index][1]} on the map">Map · ${pins[index][1]}</button>` : ''}</dd></div>`).join('')}</dl>
     ${day.note ? `<p class="day-note">${day.note}</p>` : ''}
     <div class="day-links">${day.links.map(([text, url]) =>
       `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`
@@ -122,6 +149,9 @@ function render() {
       <button id="next" ${selected === 7 ? 'disabled' : ''}>Next day</button>
     </div>`;
 $('share-day').onclick = () => share(selected);
+$('day-content').querySelectorAll('[data-spot]').forEach(button => {
+  button.onclick = () => openTimelineStop(button.dataset.spot);
+});
 $('day-panel').querySelectorAll('[data-choice]').forEach(button => {
   button.onclick = () => {
     state[button.dataset.choice] = button.dataset.value;
@@ -130,7 +160,7 @@ $('day-panel').querySelectorAll('[data-choice]').forEach(button => {
   };
 });
 $('previous').onclick=()=>selectDay(selected-1,true);$('next').onclick=()=>selectDay(selected+1,true);
-$('adventure-choice').value=state.adventure;$('citydate').value=state.citydate;$('rain').value=state.rain;save();renderStops();}
+$('adventure-choice').value=state.adventure;$('citydate').value=state.citydate;$('rain').value=state.rain;$('rental-return').value=state.rental;save();renderStops();}
 function selectDay(i,focus=false){const nextDay = Math.min(7, Math.max(0, i));
   if (nextDay !== selected) {
     photoIndex = 0;
@@ -140,8 +170,8 @@ function selectDay(i,focus=false){const nextDay = Math.min(7, Math.max(0, i));
   render();if(focus)$('tab-'+selected).focus({preventScroll:true});const tab=$('tab-'+selected),tabs=$('day-tabs');if(tab.offsetLeft<tabs.scrollLeft)tabs.scrollLeft=tab.offsetLeft;else if(tab.offsetLeft+tab.offsetWidth>tabs.scrollLeft+tabs.clientWidth)tabs.scrollLeft=tab.offsetLeft+tab.offsetWidth-tabs.clientWidth}
 $('day-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b)selectDay(Number(b.dataset.index),true)});
 $('day-tabs').addEventListener('keydown',e=>{let i=selected;if(e.key==='ArrowRight')i=(selected+1)%8;else if(e.key==='ArrowLeft')i=(selected+7)%8;else if(e.key==='Home')i=0;else if(e.key==='End')i=7;else return;e.preventDefault();selectDay(i,true)});
-for(const [id,key] of [['adventure-choice','adventure'],['citydate','citydate'],['rain','rain']])$(id).addEventListener('change',e=>{state[key]=e.target.value;render();toast('Our plan is updated on this device.')});
-function jumpToDay(i){selectDay(i);$('itinerary').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('day-panel').focus({preventScroll:true})}
+for(const [id,key] of [['adventure-choice','adventure'],['citydate','citydate'],['rain','rain'],['rental-return','rental']])$(id).addEventListener('change',e=>{state[key]=e.target.value;render();toast('Our plan is updated on this device.')});
+function jumpToDay(i){showItinerary('day');selectDay(i);$('day-tabs').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('day-panel').focus({preventScroll:true})}
 document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{let i=Number(b.dataset.day);if(days()[i].id==='city')i=days().findIndex((d,j)=>j>=4&&d.id!=='city');jumpToDay(i)});
 const dialog = $('experience-dialog');
 const galleryButtons = Array.from(document.querySelectorAll('.moments-grid [data-experience]'));
@@ -224,7 +254,7 @@ document.querySelector('.dialog-close').onclick=()=>dialog.close();
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});
 dialog.addEventListener('close',()=>{document.body.style.overflow='';if(returnFocus)returnFocus.focus({preventScroll:true})});
 let toastTimer;function toast(t){$('toast').textContent=t;$('toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('visible'),3500)}
-async function share(day){const u=new URL(location.href);u.hash='';u.searchParams.delete('day');if(Number.isInteger(day))u.searchParams.set('day',String(day+1));for(const k of Object.keys(defaults))u.searchParams.set(k,state[k]);try{if(navigator.share){await navigator.share({title:'Our Miami escape',text:'A little wild. A little colorful. A whole lot of time together.',url:u.href})}else if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(u.href);toast('Trip link copied. Share the sunshine!')}else prompt('Copy our trip link:',u.href)}catch(e){if(e.name!=='AbortError'){try{await navigator.clipboard.writeText(u.href);toast('Trip link copied.')}catch{prompt('Copy our trip link:',u.href)}}}}
+async function share(day){const u=new URL(location.href);u.hash='';u.searchParams.delete('day');u.searchParams.delete('view');if(Number.isInteger(day)){u.searchParams.set('day',String(day+1));if(mediaMode==='map')u.searchParams.set('view','map');}for(const k of Object.keys(defaults))u.searchParams.set(k,state[k]);try{if(navigator.share){await navigator.share({title:'Our Miami escape',text:'A little wild. A little colorful. A whole lot of time together.',url:u.href})}else if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(u.href);toast('Trip link copied. Share the sunshine!')}else prompt('Copy our trip link:',u.href)}catch(e){if(e.name!=='AbortError'){try{await navigator.clipboard.writeText(u.href);toast('Trip link copied.')}catch{prompt('Copy our trip link:',u.href)}}}}
 $('share').onclick = () => share();
 $('share-bottom').onclick = () => share();
 
@@ -234,10 +264,11 @@ const trolleyLinks = {
   bigBus: 'https://www.bigbustours.com/en/miami/red-route-miami'
 };
 const stops = {
-  airport: ['Miami International Airport', 25.7959, -80.2870, 'Miami International Airport, Miami, FL'],
+  airport: ['Fort Lauderdale-Hollywood International Airport (FLL)', 26.0729, -80.1438, 'Fort Lauderdale-Hollywood International Airport, Fort Lauderdale, FL'],
+  fllRental: ['FLL Rental Car Center', 26.0719, -80.1377, '600 Terminal Dr, Fort Lauderdale, FL 33315'],
+  miaRental: ['MIA Rental Car Center', 25.7959, -80.2498, '3900 NW 25th St, Miami, FL 33142'],
   kendall: ['Comfort Suites Miami - Kendall', 25.732909, -80.382517, '3901 SW 117th Ave, Miami, FL 33175'],
   fifth: ['The Fifth Hotel', 25.772576, -80.133110, '321 Collins Ave, Miami Beach, FL 33139'],
-  doral: ['CityPlace Doral', 25.8120, -80.3510],
   shark: ['Shark Valley Visitor Center', 25.7576, -80.7664],
   airboat: ['Coopertown Airboats', 25.7618, -80.5778],
   marina: ['Dinner Key Marina, Coconut Grove', 25.7270, -80.2330],
@@ -337,15 +368,19 @@ const transitRoutes = {
   }
 };
 const dailyStops = {
-  arrival: [['airport','Start'], ['kendall','Check in'], ['doral','Optional evening stop'], ['kendall','End']],
+  arrival: [['airport','Start'], ['fllRental','Pick up the rental car'], ['kendall','End']],
   everglades: [['kendall','Start'], ['shark'], ['airboat'], ['kendall','End']],
-  transfer: [['kendall','Start'], ['vizcaya'], ['havana'], ['airport','Return the rental car'], ['fifth','Check in'], ['pointe'], ['fifth','End']],
+  transfer: [['kendall','Start'], ['vizcaya'], ['havana'], ['fifth','Check in'], ['pointe'], ['fifth','End']],
   mid: [['fifth','Start'], ['trolley4','Board Loop B'], ['trolleyLincoln','Board Collins Express'], ['trolley31','Get off'], ['mid'],
     ['trolley29','Board southbound'], ['trolley17','Change to Loop A'], ['trolley12','Get off'], ['beach'], ['ocean'], ['fifth','End']],
   garden: [['fifth','Start'], ['trolley4','Board Loop B'], ['trolleyConvention','Get off'], ['garden'], ['memorial'], ['lincoln'], ['beach'], ['espanola'], ['fifth','End']],
   departure: [['fifth','Start'], ['pointe','Optional beach walk'], ['fifth','Collect bags'], ['airport','End']]
 };
 function stopsFor(day) {
+  if (day.id === 'transfer' && state.rental !== 'confirm') {
+    const [start, villa, lunch, ...afternoon] = dailyStops.transfer;
+    return [start, villa, lunch, [state.rental === 'fll' ? 'fllRental' : 'miaRental', 'Return the rental car'], ...afternoon];
+  }
   if (day.id === 'adventure') {
     return [['kendall','Start'], [state.adventure === 'zoo' ? 'zoo' : 'marina'], ['kendall','End']];
   }
@@ -365,8 +400,18 @@ function routeFor(day) {
 let tripMap, mapLayer;
 let showAllStops = false;
 let lastMapView = '';
+let visibleMarkers = new Map();
+
+function openTimelineStop(key) {
+  showAllStops = false;
+  setMedia('map');
+  visibleMarkers.get(key)?.openPopup();
+  if (window.matchMedia('(max-width: 800px)').matches) {
+    $('trip-map').scrollIntoView({block: 'center'});
+  }
+}
 function setupMap() {
-  if (tripMap || !window.L || mediaMode !== 'map') return;
+  if (tripMap || !window.L || mediaMode !== 'map' || itineraryMode !== 'day') return;
   tripMap = L.map('trip-map', { scrollWheelZoom: false, maxZoom: 17 });
   const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -430,9 +475,10 @@ function renderStops() {
   $('all-stops').textContent = showAllStops ? 'Back to this day' : 'Show all stops';
   $('all-stops').setAttribute('aria-pressed', String(showAllStops));
   setupMap();
-  const canDraw = tripMap && mediaMode === 'map';
+  const canDraw = tripMap && mediaMode === 'map' && itineraryMode === 'day';
   const order = groupStops(entries);
   const markers = new Map();
+  visibleMarkers = markers;
   const numbers = new Map();
   let number = 0;
   if (canDraw) {
@@ -462,7 +508,7 @@ function renderStops() {
     if (roles.length) popup.append(document.createElement('br'), [...new Set(roles)].join(' · '));
     popup.append(document.createElement('br'), directionsLink(key));
     marker.bindPopup(popup, {autoPanPaddingTopLeft: [14, 72], autoPanPaddingBottomRight: [14, 62]});
-    if (hotel && endpoint && !showAllStops) {
+    if (endpoint && !showAllStops) {
       marker.bindTooltip(endpoint, {permanent: true, direction: 'top', offset: [0,-15], className: 'hotel-tooltip'});
     }
   }
@@ -622,7 +668,124 @@ $('forecast-load').onclick = async () => {
   }
 };
 
+const daySummaries = {
+  arrival: ['Fly to Fort Lauderdale', '3:58 PM IAD · 6:49 PM FLL'],
+  everglades: ['Everglades', 'Shark Valley and Coopertown airboat'],
+  transfer: ['Vizcaya & Little Havana', 'Garden morning, then move to South Beach'],
+  mid: ['Mid Beach & Ocean Drive', 'Trolley, Beachwalk, and beach time'],
+  city: ['City day', 'Wynwood, Frost Science, and Bayside'],
+  garden: ['Gardens & South Beach', 'Botanical Garden, Lincoln Road, and Española Way'],
+  departure: ['Fly home', '7:04 PM FLL · 9:42 PM IAD']
+};
+function daySummary(day) {
+  if (day.id === 'adventure') {
+    return state.adventure === 'zoo' ? ['Zoo Miami', 'A full day with the animals'] : ['Biscayne Bay', 'Coconut Grove and weather-dependent snorkeling'];
+  }
+  if (day.id === 'city' && state.rain === 'wet') return ['Frost Science', 'A rainy-day aquarium and planetarium visit'];
+  return daySummaries[day.id];
+}
+
+let itineraryMode = requestedDay && /^[1-8]$/.test(requestedDay) ? 'day' : 'overview';
+function renderOverview(tripDays) {
+  const chapters = [
+    { heading: 'Kendall & the Everglades', dates: 'DEC 31 TO JAN 3', from: 0, to: 4 },
+    { heading: 'South Beach & the city', dates: 'JAN 4 TO JAN 7', from: 4, to: 8 }
+  ];
+  $('trip-overview').innerHTML = chapters.map(({heading, dates, from, to}) => `
+    <section class="trip-chapter" aria-label="${heading}">
+      <header><p class="eyebrow">${dates}</p><h3>${heading}</h3></header>
+      <div class="week-days">${tripDays.slice(from, to).map((day, offset) => {
+        const index = from + offset;
+        const [title, description] = daySummary(day);
+        return `<button class="week-day" type="button" data-week-day="${index}">
+          <time datetime="${index === 0 ? '2026-12-31' : '2027-01-0' + index}">${dateShort(index)}</time>
+          <img src="assets/${day.image}.webp" alt="" loading="lazy" decoding="async" data-image="${day.image}">
+          <span><strong>${title}</strong><small>${description}</small></span>
+        </button>`;
+      }).join('')}</div>
+    </section>`).join('');
+}
+
+function showItinerary(mode) {
+  itineraryMode = mode;
+  $('trip-overview').hidden = mode !== 'overview';
+  $('trip-day').hidden = mode !== 'day';
+  document.querySelectorAll('[data-itinerary-mode]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.itineraryMode === mode));
+  });
+  if (mode === 'day' && mediaMode === 'map') {
+    lastMapView = '';
+    renderStops();
+  }
+}
+document.querySelectorAll('[data-itinerary-mode]').forEach(button => {
+  button.onclick = () => showItinerary(button.dataset.itineraryMode);
+});
+$('trip-overview').addEventListener('click', event => {
+  const button = event.target.closest('[data-week-day]');
+  if (button) jumpToDay(Number(button.dataset.weekDay));
+});
+$('mobile-trip-map').onclick = () => {
+  showItinerary('day');
+  setMedia('map');
+  $('day-panel').scrollIntoView({block: 'start'});
+  $('day-panel').focus({preventScroll: true});
+};
+
+const timelinePins = {
+  arrival: [['airport', 'FLL arrivals'], ['fllRental', 'FLL rental car pickup'], ['kendall', 'Comfort Suites Miami - Kendall']],
+  everglades: [['shark', 'Shark Valley Visitor Center'], ['airboat', 'Coopertown Airboats'], ['kendall', 'Comfort Suites Miami - Kendall']],
+  mid: [['trolley4', 'South Beach trolley boarding'], ['beach', 'Lummus Park'], ['ocean', 'Ocean Drive']],
+  garden: [['trolley4', 'South Beach trolley boarding'], ['beach', 'Lummus Park'], ['espanola', 'Española Way']],
+  departure: [['pointe', 'South Pointe Park'], ['fifth', 'The Fifth Hotel'], ['airport', 'FLL departures']]
+};
+function pinsFor(day) {
+  if (day.id === 'adventure') return [[state.adventure === 'zoo' ? 'zoo' : 'marina', state.adventure === 'zoo' ? 'Zoo Miami' : 'Dinner Key Marina']];
+  if (day.id === 'transfer') return [['vizcaya', 'Vizcaya'], ['havana', 'Little Havana'], ['pointe', 'South Pointe Park']];
+  if (day.id === 'city') return state.rain === 'wet'
+    ? [['frost', 'Frost Science'], ['frost', 'Frost Science'], ['fifth', 'The Fifth Hotel']]
+    : [['busSouth', 'Big Bus stop 2'], ['busDowntown', 'Downtown Big Bus stop'], ['fifth', 'The Fifth Hotel']];
+  return timelinePins[day.id] || [];
+}
+function flightRow(flight) {
+  const [from, fromCity, leave] = flight.from;
+  const [to, toCity, arrive] = flight.to;
+  return `<div class="flight-route"><div><span>${fromCity}</span><strong>${from}</strong><b>${leave}</b></div>
+    <span class="flight-connector" aria-hidden="true"><i></i>✈<i></i></span>
+    <div><span>${toCity}</span><strong>${to}</strong><b>${arrive}</b></div></div>`;
+}
+$('flight-grid').innerHTML = Object.values(flights).map(flight => `
+  <article class="flight-ticket">
+    <header><div><p class="eyebrow">${flight.direction}</p><h3>${flight.date}</h3></div><span>Flight #${flight.number}</span></header>
+    ${flightRow(flight)}
+    <p>${flight.note}</p>
+    <button class="flight-day-link" type="button" data-flight-day="${flight.day}">See the day plan</button>
+  </article>`).join('');
+$('flight-grid').addEventListener('click', event => {
+  const button = event.target.closest('[data-flight-day]');
+  if (button) jumpToDay(Number(button.dataset.flightDay));
+});
+$('calendar-flights').onclick = () => {
+  const created = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+  const lines = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Our Miami Escape//Flight schedule//EN'];
+  for (const flight of Object.values(flights)) {
+    lines.push('BEGIN:VEVENT', `UID:miami-${flight.start}-${flight.number}@novashining.github.io`,
+      `DTSTAMP:${created}`, `DTSTART:${flight.start}`, `DTEND:${flight.end}`,
+      `SUMMARY:Flight #${flight.number} ${flight.from[0]} to ${flight.to[0]}`, 'END:VEVENT');
+  }
+  const blob = new Blob([lines.concat('END:VCALENDAR', '').join('\r\n')], {type: 'text/calendar;charset=utf-8'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'miami-flights.ics';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+};
+
+showItinerary(itineraryMode);
 render();
 if (requestedDay && /^[1-8]$/.test(requestedDay)) {
-  requestAnimationFrame(() => jumpToDay(selected));
+  requestAnimationFrame(() => {
+    jumpToDay(selected);
+    if (params.get('view') === 'map') setMedia('map');
+  });
 }
