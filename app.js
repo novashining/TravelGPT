@@ -295,7 +295,7 @@ const transitRoutes = {
     title: 'Trolley to the gardens',
     steps: [
       ['Out', 'Walk to Washington & 4th. Ride South Beach Loop B to 17th St & Convention Center Dr, then walk to the garden.'],
-      ['Back', 'Walk through Lincoln Road and Española Way to the beach, then back to The Fifth Hotel.']
+      ['Back', 'Walk to Lincoln Road and the beach. After dinner on Española Way, walk back to The Fifth Hotel.']
     ],
     sources: [['South Beach trolley map', trolleyLinks.south]],
     legs: [
@@ -304,8 +304,8 @@ const transitRoutes = {
         [25.79685,-80.1290], [25.7990,-80.12855], [25.7995,-80.12645], [25.7972,-80.1273],
         [25.79445,-80.1299], [25.7922,-80.1307], coords('trolleyConvention')]],
       ['walk', [coords('trolleyConvention'), [25.7923,-80.1359], coords('garden'), coords('memorial'),
-        [25.7946,-80.1376], [25.79065,-80.1376], coords('lincoln'), [25.7907,-80.132],
-        coords('espanola'), [25.78655,-80.13005], coords('beach'), [25.7748,-80.1319],
+        [25.7946,-80.1376], [25.79065,-80.1376], coords('lincoln'), [25.79096,-80.1295],
+        coords('beach'), [25.78655,-80.13005], coords('espanola'), [25.7748,-80.1319],
         [25.77267,-80.1320], coords('fifth')]]
     ]
   },
