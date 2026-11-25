@@ -1,21 +1,14 @@
-# TravelGPT | Miami family vacation
+# TravelGPT | Miami family trip
 
-A responsive, dependency-free trip planner for Dec 31, 2026 to Jan 7, 2027. Open `index.html` in a browser or serve the repository using GitHub Pages.
-
-## Publish with GitHub Pages
-
-1. Open the repository's Settings > Pages.
-2. Under Build and deployment, choose **Deploy from a branch**.
-3. Select **main** and **/ (root)**, then Save.
-4. Once GitHub reports the deployment is live, open https://novashining.github.io/TravelGPT/ .
+A responsive, photo-first itinerary for December 31, 2026 to January 7, 2027. Open `index.html` in a browser or visit https://novashining.github.io/TravelGPT/ if GitHub Pages is enabled.
 
 ## Features
 
-- Eight-day itinerary with a Biscayne / Zoo Miami switch.
-- Move the city day among Jan 4–6; the garden visit automatically avoids Monday.
-- Rain alternative, live attraction estimate, booking checklist, official links, map directions, print and share.
-- Browser-local preferences, checklist, and optional lodging note. No backend or login; changes do not sync across devices.
+- Eight-day family itinerary with real, licensed Wikimedia Commons photographs and individual credits.
+- Switch between Biscayne snorkeling and Zoo Miami; move the mainland sightseeing day among Jan 4–6 (garden never Monday); choose a rainy-day alternative.
+- Share the current itinerary choices in a URL. Preferences are saved locally. Official attraction and map links.
+- No budget or administrative dashboard in the family view. Photos load from Wikimedia, so internet access is required for imagery.
 
-## Privacy and accuracy
+## Publish
 
-This repository and a GitHub Pages deployment are public. The dates and general itinerary are visible to anyone; the site omits exact lodging and personal booking information. A noindex directive is not access control. Use private sharing rather than public hosting if dates should remain confidential. Prices and schedules are planning estimates, not live availability or weather. Verify official sources before booking.
+In Settings > Pages select Deploy from a branch, main, / (root), and Save. The repository is public. Exact lodging and booking information is intentionally omitted. The noindex directive is not access control. Plans and opening times should be confirmed before travel.
