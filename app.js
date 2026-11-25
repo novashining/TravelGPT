@@ -12,7 +12,7 @@ let returnFocus = null;
 const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
 const base={
 arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'HELLO, MIAMI',theme:'Arrival',title:'A fresh start, Miami style.',plan:[['On the way','Travel to Miami.'],['Settle in','Pick up the rental car and check in.'],['After dark','New Year’s Eve at CityPlace Doral, or a cozy early night.']],links:[['CityPlace Doral map',maps('CityPlace Doral Miami')]],description:'Touch down, settle in, and swap winter for a little South Florida warmth. New Year’s Eve can be a stroll around CityPlace Doral or an easy night together.'},
-everglades:{id:'everglades',image:'gator',alt:'An alligator in the wetlands at Shark Valley',place:'EVERGLADES NATIONAL PARK',theme:'Wild Florida',title:'Our wildest New Year’s Day.',plan:[['Morning','Shark Valley by bike or tram. Keep an eye out for alligators and wading birds.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
+everglades:{id:'everglades',image:'shark-valley-tower',alt:'The Shark Valley Observation Tower and its winding ramp above the wetlands',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
 snorkel:{id:'adventure',image:'snorkel',alt:'A snorkeler exploring tropical fish and coral in Biscayne National Park',place:'BISCAYNE NATIONAL PARK',theme:'Ocean adventure',title:'Go where the fish are.',plan:[['Morning','A relaxed wander around Coconut Grove.'],['Afternoon','Biscayne snorkeling, planned for 1:30–5 pm.'],['Evening','Dinner by the marina.']],note:'Weather dependent. We’ll choose Zoo Miami if the ocean is too rough or cold. A reef visit is not guaranteed.',links:[['Snorkeling tour','https://www.biscaynenationalparkinstitute.org/coconut-grove-snorkel/'],['Marina map',maps('Dinner Key Marina Miami')]],description:'Blue water, tropical fish, and a peek into Biscayne’s underwater world. This is our fair-weather adventure; Zoo Miami is the backup if marine conditions don’t cooperate.'},
 zoo:{id:'adventure',image:'zoo',alt:'Pink flamingos reflected in a pond at Zoo Miami',place:'ZOO MIAMI',theme:'Wildlife day',title:'A day with the tall crowd.',plan:[['Morning','Head to Zoo Miami for giraffes, elephants, and more.'],['Afternoon','Take our time exploring the animal exhibits.'],['Evening','Dinner and an easy night.']],note:'Our full-day alternative if snorkeling weather is unfavorable.',links:[['Zoo Miami','https://www.zoomiami.org/'],['Map',maps('Zoo Miami')]],description:'A whole day for giraffes, elephants, and animal encounters. Our land-based adventure if the ocean has other plans.'},
 transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car and move to South Beach.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
@@ -47,9 +47,80 @@ function dayChoices(day) {
     `<button class="small-button" data-choice="${choices.key}" data-value="${value}" aria-pressed="${state[choices.key] === value}">${label}</button>`
   ).join('')}</div>`;
 }
-function render(){const d=days()[selected];$('day-tabs').innerHTML=days().map((x,i)=>`<button role="tab" id="tab-${i}" class="day-tab" aria-selected="${i===selected}" aria-controls="day-panel" tabindex="${i===selected?0:-1}" data-index="${i}"><span>${weekdays[i]}</span><b>${dateShort(i)}</b><span>${shortTitle(x)}</span></button>`).join('');
-$('day-panel').setAttribute('aria-labelledby','tab-'+selected);
-$('day-panel').innerHTML=`<article class="day-card"><div class="day-picture" data-image="${d.image}"><img src="assets/${d.image}.webp" alt="${escapeHtml(d.alt)}" width="960" height="640"><span class="day-image-label">${d.place}</span></div><div class="day-content"><div class="day-meta"><p class="eyebrow">${dateLong(selected)}</p><span class="day-theme">${d.theme}</span></div><h3>${d.title}</h3>${dayChoices(d)}<dl>${d.plan.map(([t,p])=>`<div><dt>${t}</dt><dd>${p}</dd></div>`).join('')}</dl>${d.note?`<p class="day-note">${d.note}</p>`:''}<div class="day-links">${d.links.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`).join('')}</div><div class="day-navigation"><button id="previous" ${selected===0?'disabled':''}>Previous day</button><button id="share-day">Share this day</button><button id="next" ${selected===7?'disabled':''}>Next day</button></div></div></article>`;
+const sharkValleyPhotos = [
+  { image: 'shark-valley-tower', label: 'Tower', place: 'Shark Valley Observation Tower',
+    alt: 'The winding path and elevated ramp to Shark Valley Observation Tower under a blue sky' },
+  { image: 'shark-valley-bike', label: 'Bike loop', place: 'Shark Valley Tram Road',
+    alt: 'Cyclists riding the paved Shark Valley loop through the Everglades' },
+  { image: 'gator', label: 'Wildlife', place: 'Alligator at Shark Valley',
+    alt: 'An American alligator among lily pads at Shark Valley' }
+];
+let mediaMode = 'photo';
+let photoIndex = 0;
+
+function updateDayPhoto(day) {
+  const photo = day.id === 'everglades' ? sharkValleyPhotos[photoIndex] : day;
+  const image = $('day-image');
+  const src = 'assets/' + photo.image + '.webp';
+  if (image.getAttribute('src') !== src) image.src = src;
+  image.alt = photo.alt;
+  $('day-photo-view').dataset.image = photo.image;
+  $('day-image-label').textContent = photo.place;
+  const scenes = $('photo-scenes');
+  scenes.hidden = day.id !== 'everglades';
+  scenes.querySelectorAll('button').forEach((button, i) => {
+    button.setAttribute('aria-pressed', String(i === photoIndex));
+  });
+}
+for (const [i, photo] of sharkValleyPhotos.entries()) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = photo.label;
+  button.setAttribute('aria-controls', 'day-image');
+  button.onclick = () => {
+    photoIndex = i;
+    updateDayPhoto(days()[selected]);
+  };
+  $('photo-scenes').append(button);
+}
+
+function setMedia(mode) {
+  mediaMode = mode;
+  $('day-photo-view').hidden = mode !== 'photo';
+  $('day-map-view').hidden = mode !== 'map';
+  document.querySelectorAll('.media-toggle button').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.media === mode));
+  });
+  renderStops();
+}
+document.querySelectorAll('.media-toggle button').forEach(button => {
+  button.onclick = () => setMedia(button.dataset.media);
+});
+
+function render() {
+  const tripDays = days();
+  const day = tripDays[selected];
+  $('day-tabs').innerHTML = tripDays.map((entry, i) =>
+    `<button role="tab" id="tab-${i}" class="day-tab" aria-selected="${i === selected}" aria-controls="day-panel" tabindex="${i === selected ? 0 : -1}" data-index="${i}">
+      <span>${weekdays[i]}</span><b>${dateShort(i)}</b><span>${shortTitle(entry)}</span>
+    </button>`
+  ).join('');
+  $('day-panel').setAttribute('aria-labelledby', 'tab-' + selected);
+  updateDayPhoto(day);
+  $('day-content').innerHTML = `
+    <div class="day-meta"><p class="eyebrow">${dateLong(selected)}</p><span class="day-theme">${day.theme}</span></div>
+    <h3>${day.title}</h3>
+    ${dayChoices(day)}
+    <dl>${day.plan.map(([time, plan]) => `<div><dt>${time}</dt><dd>${plan}</dd></div>`).join('')}</dl>
+    ${day.note ? `<p class="day-note">${day.note}</p>` : ''}
+    <div class="day-links">${day.links.map(([text, url]) =>
+      `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`
+    ).join('')}</div>
+    <div class="day-navigation">
+      <button id="previous" ${selected === 0 ? 'disabled' : ''}>Previous day</button>
+      <button id="share-day">Share this day</button>
+      <button id="next" ${selected === 7 ? 'disabled' : ''}>Next day</button>
+    </div>`;
 $('share-day').onclick = () => share(selected);
 $('day-panel').querySelectorAll('[data-choice]').forEach(button => {
   button.onclick = () => {
@@ -60,7 +131,13 @@ $('day-panel').querySelectorAll('[data-choice]').forEach(button => {
 });
 $('previous').onclick=()=>selectDay(selected-1,true);$('next').onclick=()=>selectDay(selected+1,true);
 $('adventure-choice').value=state.adventure;$('citydate').value=state.citydate;$('rain').value=state.rain;save();renderStops();}
-function selectDay(i,focus=false){selected=Math.min(7,Math.max(0,i));render();if(focus)$('tab-'+selected).focus({preventScroll:true});const tab=$('tab-'+selected),tabs=$('day-tabs');if(tab.offsetLeft<tabs.scrollLeft)tabs.scrollLeft=tab.offsetLeft;else if(tab.offsetLeft+tab.offsetWidth>tabs.scrollLeft+tabs.clientWidth)tabs.scrollLeft=tab.offsetLeft+tab.offsetWidth-tabs.clientWidth}
+function selectDay(i,focus=false){const nextDay = Math.min(7, Math.max(0, i));
+  if (nextDay !== selected) {
+    photoIndex = 0;
+    showAllStops = false;
+  }
+  selected = nextDay;
+  render();if(focus)$('tab-'+selected).focus({preventScroll:true});const tab=$('tab-'+selected),tabs=$('day-tabs');if(tab.offsetLeft<tabs.scrollLeft)tabs.scrollLeft=tab.offsetLeft;else if(tab.offsetLeft+tab.offsetWidth>tabs.scrollLeft+tabs.clientWidth)tabs.scrollLeft=tab.offsetLeft+tab.offsetWidth-tabs.clientWidth}
 $('day-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b)selectDay(Number(b.dataset.index),true)});
 $('day-tabs').addEventListener('keydown',e=>{let i=selected;if(e.key==='ArrowRight')i=(selected+1)%8;else if(e.key==='ArrowLeft')i=(selected+7)%8;else if(e.key==='Home')i=0;else if(e.key==='End')i=7;else return;e.preventDefault();selectDay(i,true)});
 for(const [id,key] of [['adventure-choice','adventure'],['citydate','citydate'],['rain','rain']])$(id).addEventListener('change',e=>{state[key]=e.target.value;render();toast('Our plan is updated on this device.')});
@@ -186,7 +263,7 @@ let tripMap, mapLayer;
 let showAllStops = false;
 let lastMapView = '';
 function setupMap() {
-  if (tripMap || !window.L || !$('map-details').open) return;
+  if (tripMap || !window.L || mediaMode !== 'map') return;
   tripMap = L.map('trip-map', { scrollWheelZoom: false, maxZoom: 17 });
   const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -204,7 +281,7 @@ function renderStops() {
   $('all-stops').textContent = showAllStops ? 'Back to this day' : 'Show all stops';
   $('all-stops').setAttribute('aria-pressed', String(showAllStops));
   setupMap();
-  const canDraw = tripMap && $('map-details').open;
+  const canDraw = tripMap && mediaMode === 'map';
   if (canDraw) {
     tripMap.invalidateSize({pan: false});
     mapLayer.clearLayers();
@@ -216,7 +293,7 @@ function renderStops() {
     const label = i + 1;
     const item = document.createElement('li');
     const direction = document.createElement('a');
-    direction.href = maps(name + ', Florida');
+    direction.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(name + ', Florida');
     direction.target = '_blank';
     direction.rel = 'noopener';
     direction.textContent = 'Directions';
@@ -224,11 +301,13 @@ function renderStops() {
     if (canDraw) {
       const color = selected < 4 && !showAllStops ? 'coral-pin' : 'teal-pin';
       const icon = L.divIcon({className: 'trip-pin ' + color, html: String(label), iconSize: [28,28]});
-      const marker = L.marker([lat,lng], {title: name, alt: name, icon}).addTo(mapLayer);
+      const marker = L.marker([lat,lng], {title: name, alt: name, icon});
+      marker.on('add', () => marker.getElement()?.setAttribute('aria-label', label + '. ' + name));
+      marker.addTo(mapLayer);
       const popup = document.createElement('div');
       popup.textContent = name;
       popup.append(document.createElement('br'), direction.cloneNode(true));
-      marker.bindPopup(popup);
+      marker.bindPopup(popup, {autoPanPaddingTopLeft: [14, 72], autoPanPaddingBottomRight: [14, 62]});
       const locate = document.createElement('button');
       locate.type = 'button';
       locate.className = 'locate-stop';
@@ -250,7 +329,6 @@ function renderStops() {
     lastMapView = view;
   }
 }
-$('map-details').addEventListener('toggle', renderStops);
 $('all-stops').onclick = () => { showAllStops = !showAllStops; renderStops(); };
 
 const bookingItems = [

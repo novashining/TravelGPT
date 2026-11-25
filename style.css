@@ -79,8 +79,7 @@
   content: ' +'; margin-left: 9px; font-weight: 700;
 }
 .map-details[open] summary > span::after, .prep details[open] summary > span:last-child::after { content: ' −'; }
-.map-layout { display: grid; grid-template-columns: 1.45fr 1fr; background: #fffdf7; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
-#trip-map { height: 310px; min-width: 0; z-index: 0; background: #dce6d7; }
+#trip-map { position: absolute; inset: 0; z-index: 0; background: #dce6d7; }
 #trip-map.tiles-unavailable::after {
   content: 'Some map tiles could not load. Use Directions for routing.';
   position: absolute; bottom: 24px; left: 12px; right: 12px; z-index: 500;
@@ -89,7 +88,7 @@
 .trip-pin { display: grid; place-content: center; border-radius: 50%; border: 2px solid #fff; color: #fff; font-weight: 700; font-size: .85rem; box-shadow: 0 1px 5px #243d3f80; }
 .coral-pin { background: #ad442e; }
 .teal-pin { background: #22685c; }
-.map-side { padding: 22px; max-height: 310px; overflow: auto; }
+.map-side { padding: 0 20px 15px; }
 .map-side ol { margin: 14px 0 5px; padding-left: 23px; }
 .map-side li { padding-block: 6px; border-bottom: 1px solid #e5e6da; }
 .map-side li a { margin-left: 8px; font-size: .8rem; white-space: nowrap; }
@@ -125,9 +124,8 @@
   .moments-grid .wild { grid-row: span 1; min-height: 250px; }
   .moments-grid { grid-template-rows: 250px; }
   .moments-grid .moment-copy small { font-size: .62rem; }
-  .map-layout, .prep .prep-tools { grid-template-columns: 1fr; }
-  #trip-map { height: 260px; }
-  .map-side { padding: 15px; max-height: 220px; }
+  .prep .prep-tools { grid-template-columns: 1fr; }
+  .map-side { padding-inline: 12px; }
   .day-tab span:last-child { font-size: .76rem; letter-spacing: 0; }
 }
 @media (max-width: 540px) {
@@ -144,4 +142,75 @@
 }
 @media (max-width: 600px) {
   .moments-grid .pier img { object-position: center 56%; }
+}
+
+/* The photograph and interactive map share the same space. */
+.day-media {
+  position: relative;
+  min-width: 0;
+  min-height: 460px;
+  isolation: isolate;
+  background: #dce6d7;
+}
+.day-media [hidden] { display: none; }
+.day-media .day-picture, .day-map-view { position: absolute; inset: 0; height: auto; }
+.media-toggle, .photo-scenes {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  background: #fffdf7;
+  border: 1px solid #23382f27;
+  border-radius: 30px;
+  box-shadow: 0 2px 12px #23382f22;
+}
+.media-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  right: 15px;
+}
+.media-toggle button, .photo-scenes button {
+  min-height: 43px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.media-toggle button[aria-pressed=true], .photo-scenes button[aria-pressed=true] {
+  background: #23382f;
+  color: #fffdf7;
+}
+.media-toggle button[aria-pressed=false]:hover, .photo-scenes button[aria-pressed=false]:hover {
+  background: #f6e7bf;
+}
+.day-map-view #all-stops {
+  position: absolute;
+  z-index: 1;
+  left: 14px;
+  bottom: 22px;
+  box-shadow: 0 2px 9px #23382f29;
+}
+.day-picture[data-image=shark-valley-tower] img { object-position: 24% center; }
+.day-picture[data-image=shark-valley-bike] img { object-position: 61% center; }
+.day-picture:has(.photo-scenes:not([hidden])) .day-image-label { bottom: 75px; }
+.photo-scenes {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+}
+.map-side ol { margin-top: 0; }
+.map-side li { padding-block: 9px; }
+#trip-map.tiles-unavailable::after { bottom: 77px; }
+@media (max-width: 800px) {
+  .day-media { min-height: 360px; }
+}
+@media (max-width: 540px) {
+  .day-media { min-height: 307px; }
+  .media-toggle { top: 9px; right: 9px; }
+  .media-toggle button, .photo-scenes button { padding-inline: 12px; }
+  .photo-scenes { bottom: 9px; left: 9px; }
+  .day-picture:has(.photo-scenes:not([hidden])) .day-image-label { left: 10px; bottom: 64px; }
 }
