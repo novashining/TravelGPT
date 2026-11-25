@@ -1,14 +1,14 @@
-# TravelGPT | Miami family trip
+# Our Miami escape
 
-A responsive, photo-first itinerary for December 31, 2026 to January 7, 2027. Open `index.html` in a browser or visit https://novashining.github.io/TravelGPT/ if GitHub Pages is enabled.
+A photo-led family trip website for December 31, 2026 to January 7, 2027, published with GitHub Pages.
 
-## Features
+Open `index.html` with a static server. No framework, build step, API key, or runtime dependency is needed.
 
-- Eight-day family itinerary with real, licensed Wikimedia Commons photographs and individual credits.
-- Switch between Biscayne snorkeling and Zoo Miami; move the mainland sightseeing day among Jan 4–6 (garden never Monday); choose a rainy-day alternative.
-- Share the current itinerary choices in a URL. Preferences are saved locally. Official attraction and map links.
-- No budget or administrative dashboard in the family view. Photos load from Wikimedia, so internet access is required for imagery.
+- Responsive beach opening, destination photo stories, and keyboard-accessible daily itinerary tabs.
+- Clickable destination previews in native accessible dialogs.
+- Weather choices for snorkeling versus Zoo Miami and the January 4–6 city day.
+- Preferences stay on the current device; sharing includes those choices in the URL.
+- Optimized photos are served from the repository, with credits and licenses in the page footer.
+- Reduced-motion support, visible keyboard focus, and lazy loading for supporting photos.
 
-## Publish
-
-In Settings > Pages select Deploy from a branch, main, / (root), and Save. The repository is public. Exact lodging and booking information is intentionally omitted. The noindex directive is not access control. Plans and opening times should be confirmed before travel.
+The trip is flexible. Confirm operating hours, tours, marine conditions, and optional seasonal events before booking.
