@@ -30,7 +30,7 @@ const airportGuide = 'https://www.broward.org/Airport/passengers/Transportation'
 
 const base={
 arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'SOUTH FLORIDA ARRIVAL',theme:'Flight day',title:'Touch down in Fort Lauderdale.',plan:[['3:58 PM','Depart Washington Dulles (IAD) on flight #2959.'],['6:49 PM','Land at Fort Lauderdale (FLL). Collect bags and pick up the rental car.'],['Evening','Drive to Comfort Suites Miami - Kendall, check in, and have dinner nearby.']],links:[['FLL rental car center',airportGuide]],description:'An evening arrival at Fort Lauderdale, then an easy dinner and hotel check-in before the Everglades.'},
-everglades:{id:'everglades',image:'shark-valley-tower',alt:'The Shark Valley Observation Tower and its winding ramp above the wetlands',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
+everglades:{id:'everglades',image:'shark-valley-bike',alt:'Cyclists riding the paved Shark Valley loop through the Everglades',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
 snorkel:{id:'adventure',image:'snorkel',alt:'A snorkeler exploring tropical fish and coral in Biscayne National Park',place:'BISCAYNE NATIONAL PARK',theme:'Ocean adventure',title:'Go where the fish are.',plan:[['Morning','A relaxed wander around Coconut Grove.'],['Afternoon','Biscayne snorkeling, planned for 1:30–5 pm.'],['Evening','Dinner by the marina.']],note:'Weather dependent. We’ll choose Zoo Miami if the ocean is too rough or cold. A reef visit is not guaranteed.',links:[['Snorkeling tour','https://www.biscaynenationalparkinstitute.org/coconut-grove-snorkel/'],['Marina map',maps('Dinner Key Marina Miami')]],description:'Blue water, tropical fish, and a peek into Biscayne’s underwater world. This is our fair-weather adventure; Zoo Miami is the backup if marine conditions don’t cooperate.'},
 zoo:{id:'adventure',image:'zoo',alt:'Pink flamingos reflected in a pond at Zoo Miami',place:'ZOO MIAMI',theme:'Wildlife day',title:'A day with the tall crowd.',plan:[['Morning','Head to Zoo Miami for giraffes, elephants, and more.'],['Afternoon','Take our time exploring the animal exhibits.'],['Evening','Dinner and an easy night.']],note:'Our full-day alternative if snorkeling weather is unfavorable.',links:[['Zoo Miami','https://www.zoomiami.org/'],['Map',maps('Zoo Miami')]],description:'A whole day for giraffes, elephants, and animal encounters. Our land-based adventure if the ocean has other plans.'},
 transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car at the location on your rental agreement, then check in at The Fifth Hotel.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
@@ -41,7 +41,7 @@ departure:{id:'departure',image:'pier',alt:'South Pointe Pier and the turquoise 
 };
 function days(){const c=Number(state.citydate),g=c===6?5:6;return [base.arrival,base.everglades,state.adventure==='zoo'?base.zoo:base.snorkel,transferDay(),...[4,5,6].map(i=>i===c?getCity():i===g?base.garden:base.mid),base.departure]}
 function transferDay() {
-  if (state.rental === 'confirm') return {...base.transfer, note: 'Rental return location still to verify. You can add it under Trip details.'};
+  if (state.rental === 'confirm') return {...base.transfer, note: 'Choose the return airport shown on your rental agreement.'};
   const airport = state.rental === 'fll' ? 'Fort Lauderdale airport (FLL)' : 'Miami airport (MIA)';
   return {...base.transfer, plan: base.transfer.plan.map(([time, plan]) => [time, time === 'Afternoon'
     ? `Cuban lunch in Little Havana. Return the car at ${airport}, then check in at The Fifth Hotel.` : plan])};
@@ -61,23 +61,35 @@ function shortTitle(day) {
   return shortTitles[day.id];
 }
 function dayChoices(day) {
-  const choices = day.id === 'adventure'
-    ? { key: 'adventure', values: [['snorkel', 'Biscayne'], ['zoo', 'Zoo Miami']] }
-    : day.id === 'city'
-      ? { key: 'rain', values: [['dry', 'Dry day'], ['wet', 'Rainy day']] }
-      : null;
-  if (!choices) return '';
-  return `<div class="day-choices" role="group" aria-label="Choose the day plan">${choices.values.map(([value,label]) =>
-    `<button class="small-button" data-choice="${choices.key}" data-value="${value}" aria-pressed="${state[choices.key] === value}">${label}</button>`
-  ).join('')}</div>`;
+  const groups = [];
+  if (day.id === 'adventure') {
+    groups.push(['January 2 adventure', 'adventure', [['snorkel', 'Biscayne snorkeling'], ['zoo', 'Zoo Miami']]]);
+  }
+  if (day.id === 'city') {
+    groups.push(
+      ['City day weather', 'rain', [['dry', 'Big Bus + Wynwood'], ['wet', 'Rain plan: Frost Science']]],
+      ['Move the city day', 'citydate', [['4', 'Jan 4'], ['5', 'Jan 5'], ['6', 'Jan 6']]]
+    );
+  }
+  if (day.id === 'transfer') {
+    groups.push(['Rental car return', 'rental', [['confirm', 'To confirm'], ['fll', 'FLL'], ['mia', 'MIA']]]);
+  }
+  return groups.map(([heading, key, choices]) => `<div class="day-choice">
+    <p>${heading}</p>
+    <div class="day-choices" role="group" aria-label="${heading}">${choices.map(([value, label]) =>
+      `<button type="button" class="small-button" data-choice="${key}" data-value="${value}" aria-pressed="${state[key] === value}">${label}</button>`
+    ).join('')}</div></div>`).join('');
 }
+
 const sharkValleyPhotos = [
-  { image: 'shark-valley-tower', label: 'Tower', place: 'Shark Valley Observation Tower',
-    alt: 'The winding path and elevated ramp to Shark Valley Observation Tower under a blue sky' },
   { image: 'shark-valley-bike', label: 'Bike loop', place: 'Shark Valley Tram Road',
     alt: 'Cyclists riding the paved Shark Valley loop through the Everglades' },
+  { image: 'shark-valley-tower', label: 'The overlook', place: 'Shark Valley Observation Tower',
+    alt: 'The winding path and elevated ramp to Shark Valley Observation Tower under a blue sky' },
   { image: 'gator', label: 'Wildlife', place: 'Alligator at Shark Valley',
-    alt: 'An American alligator among lily pads at Shark Valley' }
+    alt: 'An American alligator among lily pads at Shark Valley' },
+  { image: 'airboat', label: 'Airboat', place: 'Everglades airboat ride',
+    alt: 'Passengers on an airboat in an Everglades channel' }
 ];
 let mediaMode = 'photo';
 let photoIndex = 0;
@@ -99,7 +111,13 @@ function updateDayPhoto(day) {
 for (const [i, photo] of sharkValleyPhotos.entries()) {
   const button = document.createElement('button');
   button.type = 'button';
-  button.textContent = photo.label;
+  const thumbnail = document.createElement('img');
+  thumbnail.src = 'assets/' + photo.image + '.webp';
+  thumbnail.alt = '';
+  thumbnail.loading = 'lazy';
+  const name = document.createElement('span');
+  name.textContent = photo.label;
+  button.append(thumbnail, name);
   button.setAttribute('aria-controls', 'day-image');
   button.onclick = () => {
     photoIndex = i;
@@ -115,6 +133,7 @@ function setMedia(mode) {
   document.querySelectorAll('.media-toggle button').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.media === mode));
   });
+  syncItineraryViews();
   renderStops();
 }
 document.querySelectorAll('.media-toggle button').forEach(button => {
@@ -136,7 +155,9 @@ function render() {
   $('day-content').innerHTML = `
     <div class="day-meta"><p class="eyebrow">${dateLong(selected)}</p><span class="day-theme">${day.theme}</span></div>
     <h3>${day.title}</h3>
+    ${dayAnchors(day)}
     ${dayChoices(day)}
+    ${['adventure', 'city'].includes(day.id) ? '<button type="button" class="day-forecast-link">Check forecast</button>' : ''}
     <dl class="day-timeline">${day.plan.map(([time, plan], index) => `<div><dt>${time}</dt><dd>${plan}${pins[index]
       ? `<button type="button" class="timeline-pin" data-spot="${pins[index][0]}" aria-label="Show ${pins[index][1]} on the map">Map · ${pins[index][1]}</button>` : ''}</dd></div>`).join('')}</dl>
     ${day.note ? `<p class="day-note">${day.note}</p>` : ''}
@@ -152,15 +173,39 @@ $('share-day').onclick = () => share(selected);
 $('day-content').querySelectorAll('[data-spot]').forEach(button => {
   button.onclick = () => openTimelineStop(button.dataset.spot);
 });
-$('day-panel').querySelectorAll('[data-choice]').forEach(button => {
+$('day-content').querySelector('[data-day-map]').onclick = () => openDayMap(true);
+const forecastLink = $('day-content').querySelector('.day-forecast-link');
+if (forecastLink) forecastLink.onclick = () => {
+  const weather = $('weather-options');
+  weather.open = true;
+  weather.scrollIntoView({block: 'start'});
+  $('forecast-load').focus({preventScroll: true});
+  $('forecast-load').click();
+};
+$('day-content').querySelectorAll('[data-choice]').forEach(button => {
   button.onclick = () => {
-    state[button.dataset.choice] = button.dataset.value;
-    render();
-    $('day-panel').querySelector(`[data-value="${button.dataset.value}"]`).focus({preventScroll: true});
+    const {choice, value} = button.dataset;
+    applyChoices({[choice]: value});
+    $('day-content').querySelector(`[data-choice="${choice}"][data-value="${value}"]`)?.focus({preventScroll: true});
   };
 });
-$('previous').onclick=()=>selectDay(selected-1,true);$('next').onclick=()=>selectDay(selected+1,true);
-$('adventure-choice').value=state.adventure;$('citydate').value=state.citydate;$('rain').value=state.rain;$('rental-return').value=state.rental;save();renderStops();}
+$('previous').onclick = () => selectDay(selected - 1, true);
+$('next').onclick = () => selectDay(selected + 1, true);
+$('adventure-choice').value = state.adventure;
+$('citydate').value = state.citydate;
+$('rain').value = state.rain;
+$('rental-return').value = state.rental;
+$('weather-summary').textContent = (state.adventure === 'zoo' ? 'Zoo Miami' : 'Biscayne') + ' · City Jan ' + state.citydate;
+save();
+renderStops();
+}
+
+function applyChoices(choices) {
+  const openCity = days()[selected].id === 'city';
+  Object.assign(state, choices);
+  if (openCity) selectDay(Number(state.citydate));
+  else render();
+}
 function selectDay(i,focus=false){const nextDay = Math.min(7, Math.max(0, i));
   if (nextDay !== selected) {
     photoIndex = 0;
@@ -170,15 +215,15 @@ function selectDay(i,focus=false){const nextDay = Math.min(7, Math.max(0, i));
   render();if(focus)$('tab-'+selected).focus({preventScroll:true});const tab=$('tab-'+selected),tabs=$('day-tabs');if(tab.offsetLeft<tabs.scrollLeft)tabs.scrollLeft=tab.offsetLeft;else if(tab.offsetLeft+tab.offsetWidth>tabs.scrollLeft+tabs.clientWidth)tabs.scrollLeft=tab.offsetLeft+tab.offsetWidth-tabs.clientWidth}
 $('day-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-index]');if(b)selectDay(Number(b.dataset.index),true)});
 $('day-tabs').addEventListener('keydown',e=>{let i=selected;if(e.key==='ArrowRight')i=(selected+1)%8;else if(e.key==='ArrowLeft')i=(selected+7)%8;else if(e.key==='Home')i=0;else if(e.key==='End')i=7;else return;e.preventDefault();selectDay(i,true)});
-for(const [id,key] of [['adventure-choice','adventure'],['citydate','citydate'],['rain','rain'],['rental-return','rental']])$(id).addEventListener('change',e=>{state[key]=e.target.value;render();toast('Our plan is updated on this device.')});
-function jumpToDay(i){showItinerary('day');selectDay(i);$('day-tabs').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('day-panel').focus({preventScroll:true})}
+for(const [id,key] of [['adventure-choice','adventure'],['citydate','citydate'],['rain','rain'],['rental-return','rental']])$(id).addEventListener('change',e=>{applyChoices({[key]: e.target.value});toast('Plan updated on this device.')});
+function jumpToDay(i){showItinerary('day');setMedia('photo');selectDay(i);$('day-tabs').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});$('day-panel').focus({preventScroll:true})}
 document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{let i=Number(b.dataset.day);if(days()[i].id==='city')i=days().findIndex((d,j)=>j>=4&&d.id!=='city');jumpToDay(i)});
 const dialog = $('experience-dialog');
 const galleryButtons = Array.from(document.querySelectorAll('.moments-grid [data-experience]'));
 const photoStories = {
   everglades: {
-    title: 'Everglades National Park', image: 'everglades',
-    alt: 'Golden sunset reflected in the wetlands of Everglades National Park',
+    title: 'Shark Valley, Everglades National Park', image: 'shark-valley-bike',
+    alt: 'Cyclists riding the paved Shark Valley loop through the Everglades',
     description: 'At Shark Valley, we’ll look for alligators and wading birds along the 15-mile loop. We can ride the tram or rent bikes.'
   },
   airboat: {
@@ -452,15 +497,56 @@ function groupStops(entries) {
   return groups;
 }
 
-function directionsLink(key) {
-  const [name,,,address] = stops[key];
+function searchStop(key) {
+  const [name, lat, lng, address] = stops[key];
+  return address || (name.includes('·') ? lat + ',' + lng : name + ', Florida');
+}
+
+function directionsUrl(key, origin, travelMode) {
+  const params = new URLSearchParams({api: '1', destination: searchStop(key)});
+  if (origin) params.set('origin', searchStop(origin));
+  if (travelMode) params.set('travelmode', travelMode);
+  return 'https://www.google.com/maps/dir/?' + params;
+}
+
+function directionsLink(key, origin, travelMode) {
   const link = document.createElement('a');
-  link.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(address || name + ', Florida');
+  link.href = directionsUrl(key, origin, travelMode);
   link.target = '_blank';
   link.rel = 'noopener';
-  link.textContent = 'Directions';
-  link.setAttribute('aria-label', 'Directions to ' + name);
+  link.textContent = origin ? 'From start' : 'Directions';
+  link.setAttribute('aria-label', 'Directions to ' + stops[key][0] + (origin ? ' from ' + stops[origin][0] : ''));
   return link;
+}
+
+const firstLegStops = {
+  arrival: ['fllRental', 'walking'],
+  everglades: ['shark', 'driving'],
+  transfer: ['vizcaya', 'driving'],
+  mid: ['trolley4', 'walking'],
+  garden: ['trolley4', 'walking'],
+  departure: ['airport', 'driving']
+};
+
+function firstLegFor(day) {
+  if (day.id === 'adventure') return [state.adventure === 'zoo' ? 'zoo' : 'marina', 'driving'];
+  if (day.id === 'city') return state.rain === 'wet' ? ['frost', 'driving'] : ['busSouth', 'walking'];
+  return firstLegStops[day.id];
+}
+
+function dayAnchors(day) {
+  const entries = stopsFor(day);
+  const start = entries[0][0];
+  const end = entries.at(-1)[0];
+  const [destination, mode] = firstLegFor(day);
+  const endpoint = (role, key) => `<div><small>${role}</small><strong>${stops[key][0]}</strong></div>`;
+  return `<div class="day-anchors">
+    <div class="anchor-points">${start === end ? endpoint('Start &amp; finish', start) : endpoint('Start', start) + endpoint('Finish', end)}</div>
+    <div class="anchor-actions">
+      <button type="button" data-day-map>View route map</button>
+      <a href="${escapeHtml(directionsUrl(destination, start, mode))}" target="_blank" rel="noopener">Directions to ${stops[destination][0].split(' · ')[0]}</a>
+    </div>
+  </div>`;
 }
 
 function renderStops() {
@@ -470,6 +556,9 @@ function renderStops() {
     ? [...new Set(days().flatMap(stopsFor).map(([key]) => key))].map(key => [key])
     : stopsFor(day);
   const route = routeFor(day);
+  const start = showAllStops ? null : entries[0][0];
+  const [firstStop, firstMode] = firstLegFor(day);
+  const fromStart = key => key === start ? null : start;
   renderRoute(route);
   $('map-day').textContent = showAllStops ? 'Whole trip' : dateShort(selected) + ' · ' + shortTitle(day);
   $('all-stops').textContent = showAllStops ? 'Back to this day' : 'Show all stops';
@@ -507,6 +596,7 @@ function renderStops() {
     if (address) popup.append(document.createElement('br'), address);
     if (roles.length) popup.append(document.createElement('br'), [...new Set(roles)].join(' · '));
     popup.append(document.createElement('br'), directionsLink(key));
+    if (fromStart(key)) popup.append(document.createElement('br'), directionsLink(key, start, key === firstStop ? firstMode : undefined));
     marker.bindPopup(popup, {autoPanPaddingTopLeft: [14, 72], autoPanPaddingBottomRight: [14, 62]});
     if (endpoint && !showAllStops) {
       marker.bindTooltip(endpoint, {permanent: true, direction: 'top', offset: [0,-15], className: 'hotel-tooltip'});
@@ -540,7 +630,7 @@ function renderStops() {
     } else {
       item.append(name);
     }
-    item.append(directionsLink(key));
+    item.append(directionsLink(key, fromStart(key), key === firstStop && !showAllStops ? firstMode : undefined));
     list.append(item);
   }
   if (!canDraw) return;
@@ -578,6 +668,11 @@ function checklist(id, items) {
   const storeKey = 'miami-escape-' + id;
   let checked = {};
   try { checked = JSON.parse(localStorage.getItem(storeKey)) || {}; } catch {}
+  const progress = $(id + '-count');
+  const updateProgress = () => {
+    const complete = items.filter(([name]) => checked[name] === true).length;
+    progress.textContent = complete + ' of ' + items.length + ' checked';
+  };
   for (const [name, url] of items) {
     const item = document.createElement('li');
     const label = document.createElement('label');
@@ -586,6 +681,7 @@ function checklist(id, items) {
     input.checked = checked[name] === true;
     input.onchange = () => {
       checked[name] = input.checked;
+      updateProgress();
       try { localStorage.setItem(storeKey, JSON.stringify(checked)); } catch {}
     };
     label.append(input, document.createTextNode(name));
@@ -601,6 +697,7 @@ function checklist(id, items) {
     }
     $(id).append(item);
   }
+  updateProgress();
 }
 checklist('booking-list', bookingItems);
 checklist('packing-list', packingItems.map(item => [item]));
@@ -627,16 +724,44 @@ function daysBetween(first, second) {
 const untilTrip = daysBetween(miamiDate(), arrivalDate);
 if (untilTrip > 0) $('countdown').textContent = untilTrip + (untilTrip === 1 ? ' day to Miami' : ' days to Miami');
 
+let forecastProposal;
+
+function citySuggestion(forecast) {
+  const cityDates = forecast.filter(entry => entry.day >= 4 && entry.day <= 6);
+  if (cityDates.length !== 3) return null;
+  const rainy = cityDates.filter(entry => entry.rain >= 50);
+  if (rainy.length) {
+    const pick = rainy.reduce((first, next) => next.rain > first.rain ? next : first);
+    return {pick, mode: 'wet', reason: `${pick.rain}% chance of rain. Spend the wettest day at Frost Science.`};
+  }
+  const pick = cityDates.reduce((first, next) => next.high < first.high ? next : first);
+  return {pick, mode: 'dry', reason: `At ${pick.high}°F, this is the coolest day of the three. Keep the warmer afternoons for the beach.`};
+}
+
+$('forecast-apply').onclick = () => {
+  if (!forecastProposal) return;
+  const {pick, mode} = forecastProposal;
+  applyChoices({citydate: String(pick.day), rain: mode});
+  toast('City day updated to ' + dateShort(pick.day) + '.');
+  $('forecast-apply').textContent = 'Plan applied';
+  $('forecast-apply').setAttribute('aria-disabled', 'true');
+  forecastProposal = null;
+};
+
 $('forecast-load').onclick = async () => {
   const button = $('forecast-load');
   const status = $('forecast-status');
   const output = $('forecast-days');
+  const date = miamiDate();
+  const daysUntil = daysBetween(date, arrivalDate);
   output.replaceChildren();
-  if (daysBetween(miamiDate(), arrivalDate) > 15) {
-    status.textContent = 'Trip dates enter forecast range in mid-December. Check again closer to departure.';
+  forecastProposal = null;
+  $('forecast-pick').hidden = true;
+  if (daysUntil > 15) {
+    status.textContent = 'Dec 31 enters the 16-day outlook around Dec 16. The Jan 4–6 comparison becomes available around Dec 22.';
     return;
   }
-  if (miamiDate() > tripEnd) {
+  if (date > tripEnd) {
     status.textContent = 'The trip dates have passed.';
     return;
   }
@@ -646,23 +771,36 @@ $('forecast-load').onclick = async () => {
     const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=25.78&longitude=-80.13&daily=temperature_2m_max,precipitation_probability_max,wind_speed_10m_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=16', {signal: AbortSignal.timeout(8000)});
     if (!response.ok) throw new Error('Forecast unavailable');
     const {daily} = await response.json();
-    daily.time.forEach((date, i) => {
-      if (date < arrivalDate || date > tripEnd) return;
+    const forecast = daily.time.flatMap((date, i) => {
+      if (date < arrivalDate || date > tripEnd) return [];
       const values = [daily.temperature_2m_max[i], daily.precipitation_probability_max[i], daily.wind_speed_10m_max[i]];
-      if (!values.every(Number.isFinite)) return;
+      if (!values.every(Number.isFinite)) return [];
+      const [high, rain, wind] = values.map(Math.round);
+      return [{day: daysBetween(arrivalDate, date), high, rain, wind}];
+    });
+    for (const {day, high, rain, wind} of forecast) {
       const card = document.createElement('div');
       const name = document.createElement('b');
-      name.textContent = dateShort(daysBetween(arrivalDate, date));
+      name.textContent = dateShort(day);
       const details = document.createElement('p');
-      details.textContent = `${Math.round(values[0])}°F high · ${Math.round(values[1])}% rain · ${Math.round(values[2])} mph wind`;
+      details.textContent = `${high}°F high · ${rain}% rain · ${wind} mph wind`;
       card.append(name, details);
       output.append(card);
-    });
-    status.textContent = output.children.length
-      ? 'Miami Beach daily outlook from Open-Meteo. Check marine conditions and ask the tour operator before snorkeling.'
-      : 'Trip dates are outside the available forecast.';
+    }
+    forecastProposal = citySuggestion(forecast);
+    if (forecastProposal) {
+      const {pick, mode, reason} = forecastProposal;
+      $('forecast-pick-title').textContent = `City day recommendation: ${dateShort(pick.day)} · ${mode === 'wet' ? 'Frost Science' : 'Big Bus + Wynwood'}`;
+      $('forecast-pick-reason').textContent = reason;
+      $('forecast-apply').textContent = 'Use this plan';
+      $('forecast-apply').removeAttribute('aria-disabled');
+      $('forecast-pick').hidden = false;
+    }
+    status.textContent = forecast.length
+      ? 'Miami Beach outlook from Open-Meteo. For snorkeling, check marine conditions with the tour operator.'
+      : 'No trip dates are in the available forecast.';
   } catch {
-    status.textContent = 'The forecast couldn’t load. Try again later or check the NWS link.';
+    status.textContent = 'The forecast couldn’t load. Try again or check the NWS link.';
   } finally {
     button.disabled = false;
   }
@@ -706,31 +844,50 @@ function renderOverview(tripDays) {
     </section>`).join('');
 }
 
+function syncItineraryViews() {
+  const view = itineraryMode === 'day' && mediaMode === 'map' ? 'map' : itineraryMode;
+  document.querySelectorAll('[data-itinerary-mode]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.itineraryMode === view));
+  });
+}
+
 function showItinerary(mode) {
   itineraryMode = mode;
   $('trip-overview').hidden = mode !== 'overview';
   $('trip-day').hidden = mode !== 'day';
-  document.querySelectorAll('[data-itinerary-mode]').forEach(button => {
-    button.setAttribute('aria-pressed', String(button.dataset.itineraryMode === mode));
-  });
+  syncItineraryViews();
   if (mode === 'day' && mediaMode === 'map') {
     lastMapView = '';
     renderStops();
   }
 }
+
+function openDayMap(scroll = false) {
+  showItinerary('day');
+  setMedia('map');
+  if (scroll) {
+    $('day-tabs').scrollIntoView({block: 'start'});
+    $('day-panel').focus({preventScroll: true});
+  }
+}
+
 document.querySelectorAll('[data-itinerary-mode]').forEach(button => {
-  button.onclick = () => showItinerary(button.dataset.itineraryMode);
+  button.onclick = () => {
+    const mode = button.dataset.itineraryMode;
+    if (mode === 'map') openDayMap();
+    else {
+      showItinerary(mode);
+      if (mode === 'day') setMedia('photo');
+    }
+  };
 });
 $('trip-overview').addEventListener('click', event => {
   const button = event.target.closest('[data-week-day]');
   if (button) jumpToDay(Number(button.dataset.weekDay));
 });
-$('mobile-trip-map').onclick = () => {
-  showItinerary('day');
-  setMedia('map');
-  $('day-panel').scrollIntoView({block: 'start'});
-  $('day-panel').focus({preventScroll: true});
-};
+document.querySelectorAll('[data-open-route]').forEach(button => {
+  button.onclick = () => openDayMap(true);
+});
 
 const timelinePins = {
   arrival: [['airport', 'FLL arrivals'], ['fllRental', 'FLL rental car pickup'], ['kendall', 'Comfort Suites Miami - Kendall']],
