@@ -795,3 +795,9 @@ body { font-family: "DM Sans", Arial, sans-serif; }
 #dialog-image[data-image=shark-valley-overlook] {
   object-position: 76% 39%;
 }
+
+.day-media:has(.photo-scenes:not([hidden])) .media-toggle {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
