@@ -30,7 +30,7 @@ const airportGuide = 'https://www.broward.org/Airport/passengers/Transportation'
 
 const base={
 arrival:{id:'arrival',image:'hero',alt:'Miami’s skyline glowing pink at sunset',place:'SOUTH FLORIDA ARRIVAL',theme:'Flight day',title:'Touch down in Fort Lauderdale.',plan:[['3:58 PM','Depart Washington Dulles (IAD) on flight #2959.'],['6:49 PM','Land at Fort Lauderdale (FLL). Collect bags and pick up the rental car.'],['Evening','Drive to Comfort Suites Miami - Kendall, check in, and have dinner nearby.']],links:[['FLL rental car center',airportGuide]],description:'An evening arrival at Fort Lauderdale, then an easy dinner and hotel check-in before the Everglades.'},
-everglades:{id:'everglades',image:'shark-valley-bike',alt:'Cyclists riding the paved Shark Valley loop through the Everglades',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
+everglades:{id:'everglades',image:'shark-valley-overlook',alt:'Visitors following the curved ramp to Shark Valley Observation Tower above the Everglades wetlands',place:'SHARK VALLEY OBSERVATION TOWER',theme:'Wild Florida',title:'Shark Valley & an airboat ride',plan:[['Morning','Bike the 15-mile Shark Valley loop or ride the narrated tram. Stop at the observation tower for a view across the sawgrass.'],['Afternoon','An airboat ride through the wetlands with Coopertown.'],['Evening','Dinner, then a well-earned rest.']],links:[['Shark Valley','https://www.sharkvalleytramtours.com/'],['Coopertown airboats','https://www.coopertownairboats.com/'],['Map',maps('Shark Valley Visitor Center')]],description:'A new year in the wild: alligator spotting at Shark Valley, wide-open wetlands, and an airboat ride. Bring a camera and a little sense of adventure.'},
 snorkel:{id:'adventure',image:'snorkel',alt:'A snorkeler exploring tropical fish and coral in Biscayne National Park',place:'BISCAYNE NATIONAL PARK',theme:'Ocean adventure',title:'Go where the fish are.',plan:[['Morning','A relaxed wander around Coconut Grove.'],['Afternoon','Biscayne snorkeling, planned for 1:30–5 pm.'],['Evening','Dinner by the marina.']],note:'Weather dependent. We’ll choose Zoo Miami if the ocean is too rough or cold. A reef visit is not guaranteed.',links:[['Snorkeling tour','https://www.biscaynenationalparkinstitute.org/coconut-grove-snorkel/'],['Marina map',maps('Dinner Key Marina Miami')]],description:'Blue water, tropical fish, and a peek into Biscayne’s underwater world. This is our fair-weather adventure; Zoo Miami is the backup if marine conditions don’t cooperate.'},
 zoo:{id:'adventure',image:'zoo',alt:'Pink flamingos reflected in a pond at Zoo Miami',place:'ZOO MIAMI',theme:'Wildlife day',title:'A day with the tall crowd.',plan:[['Morning','Head to Zoo Miami for giraffes, elephants, and more.'],['Afternoon','Take our time exploring the animal exhibits.'],['Evening','Dinner and an easy night.']],note:'Our full-day alternative if snorkeling weather is unfavorable.',links:[['Zoo Miami','https://www.zoomiami.org/'],['Map',maps('Zoo Miami')]],description:'A whole day for giraffes, elephants, and animal encounters. Our land-based adventure if the ocean has other plans.'},
 transfer:{id:'transfer',image:'vizcaya',alt:'The historic Vizcaya villa and formal gardens',place:'VIZCAYA + LITTLE HAVANA',theme:'Culture & coast',title:'Garden paths to ocean views.',plan:[['Morning','Explore Vizcaya’s mansion and gardens.'],['Afternoon','Cuban lunch in Little Havana. Return the car at the location on your rental agreement, then check in at The Fifth Hotel.'],['Evening','South Pointe Park, sea air, and dinner.']],links:[['Vizcaya','https://vizcaya.org/visit/'],['Little Havana map',maps('Domino Park Little Havana')],['South Pointe map',maps('South Pointe Park Miami Beach')]],description:'A morning among Vizcaya’s gardens, Cuban flavors in Little Havana, then our move to South Beach. We’ll finish the day with a walk at South Pointe Park.'},
@@ -82,14 +82,14 @@ function dayChoices(day) {
 }
 
 const sharkValleyPhotos = [
-  { image: 'shark-valley-bike', label: 'Bike loop', place: 'Shark Valley Tram Road',
-    alt: 'Cyclists riding the paved Shark Valley loop through the Everglades' },
-  { image: 'shark-valley-tower', label: 'The overlook', place: 'Shark Valley Observation Tower',
-    alt: 'The winding path and elevated ramp to Shark Valley Observation Tower under a blue sky' },
+  { image: 'shark-valley-overlook', label: 'Tower walk', place: 'Shark Valley Observation Tower',
+    alt: 'Visitors following the curved ramp to Shark Valley Observation Tower above the Everglades wetlands' },
+  { image: 'shark-valley-panorama', label: 'View from the top', place: 'The Everglades from the observation tower',
+    alt: 'A wide view of Shark Valley wetlands and blue sky from the observation tower' },
+  { image: 'shark-valley-tram', label: 'Open-air tram', place: 'Shark Valley Tram Tour',
+    alt: 'Passengers listening to a park ranger from the open-air Shark Valley tram' },
   { image: 'gator', label: 'Wildlife', place: 'Alligator at Shark Valley',
-    alt: 'An American alligator among lily pads at Shark Valley' },
-  { image: 'airboat', label: 'Airboat', place: 'Everglades airboat ride',
-    alt: 'Passengers on an airboat in an Everglades channel' }
+    alt: 'An American alligator among lily pads at Shark Valley' }
 ];
 let mediaMode = 'photo';
 let photoIndex = 0;
@@ -222,8 +222,8 @@ const dialog = $('experience-dialog');
 const galleryButtons = Array.from(document.querySelectorAll('.moments-grid [data-experience]'));
 const photoStories = {
   everglades: {
-    title: 'Shark Valley, Everglades National Park', image: 'shark-valley-bike',
-    alt: 'Cyclists riding the paved Shark Valley loop through the Everglades',
+    title: 'Shark Valley, Everglades National Park', image: 'shark-valley-overlook',
+    alt: 'Visitors following the curved ramp to Shark Valley Observation Tower above the Everglades wetlands',
     description: 'At Shark Valley, we’ll look for alligators and wading birds along the 15-mile loop. We can ride the tram or rent bikes.'
   },
   airboat: {
